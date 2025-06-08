@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "912550072493",
+    "project_id": "brain-boost-flashcard",
+    "storage_bucket": "brain-boost-flashcard.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912550072493:android:b4909bada926d864b4f624",
+        "android_client_info": {
+          "package_name": "com.flashcard.brainboost"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9N7QvihZ-mY-OGfzjkUcUQ5Y9keYCzEQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
