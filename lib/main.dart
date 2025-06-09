@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/theme/app_theme.dart';
+import 'screens/auth/auth_checker.dart';
 import 'firebase_options.dart';
+import 'screens/auth/forgot_password_screen.dart';
+import 'screens/auth/login_screen.dart';
+import 'screens/auth/register_screen.dart';
+import 'screens/home/home_screen.dart';
 import 'screens/splash/splash_screen.dart';
 
 void main() async {
@@ -27,6 +32,14 @@ class BrainBoostApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
+      routes: {
+        
+        '/register': (_) => const RegisterScreen(),
+        '/forgot-password': (_) => const ForgotPasswordScreen(),
+        '/auth': (context) => const AuthChecker(),
+        '/login': (context) => const LoginScreen(),
+        '/home': (_) => const HomeScreen(), // <--- your HomeScreen here
+},
       home: Builder(
         builder: (context) => AnimatedTheme(
           duration: const Duration(milliseconds: 300),
@@ -34,6 +47,8 @@ class BrainBoostApp extends ConsumerWidget {
           data: Theme.of(context), // Gets the current theme based on themeMode
 
           child: const SplashScreen(), // Replace with your initial screen
+
+          
 
         ),
       ),

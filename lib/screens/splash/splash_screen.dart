@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'package:brain_boost/screens/auth/auth_checker.dart';
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart'; // Assuming you have AppColors here
-import '../../onboarding/onboarding_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/constants/app_text_styles.dart';
+import '../../core/theme/app_colors.dart';
+import '../onboarding/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,45 +13,134 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacityAnimation;
+
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-      );
-    });
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    _opacityAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    _controller.forward();
+
+    Future.delayed(const Duration(seconds: 2), _checkIfFirstLaunch);
+  }
+
+  Future<void> _checkIfFirstLaunch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
+
+    if (!mounted) return;
+
+    if (hasSeenOnboarding) {
+      _navigateToHome();
+    } else {
+      await prefs.setBool('hasSeenOnboarding', true);
+      _navigateToOnboarding();
+    }
+  }
+
+  void _navigateToHome() {
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const AuthChecker(),
+        transitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (_, animation, __, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+  }
+
+  void _navigateToOnboarding() {
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const OnboardingScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (_, animation, __, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      backgroundColor: AppColors.background, // Use your app's background color
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Optionally add your logo here
-            // Image.asset('assets/images/logo.png', height: 120),
-            const SizedBox(height: 20),
-            Text(
-              'BrainBoost',
-              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w700,
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedBuilder(
+                animation: _opacityAnimation,
+                builder: (_, child) {
+                  return Opacity(
+                    opacity: _opacityAnimation.value,
+                    child: child,
+                  );
+                },
+                child: SizedBox(
+                  width: screenHeight * 0.2,
+                  height: screenHeight * 0.2,
+                  child: Image.asset(
+                    'assets/images/splash_logo.png',
+                    filterQuality: FilterQuality.high,
+                    frameBuilder: (_, child, frame, wasSynchronouslyLoaded) {
+                      if (wasSynchronouslyLoaded || frame != null) {
+                        return child;
+                      }
+                      return const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(AppColors.primary),
+                      );
+                    },
+                    errorBuilder: (_, __, ___) => const Icon(Icons.error),
                   ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Sharpen your memory!',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.grey,
-                    fontWeight: FontWeight.w400,
-                  ),
-            ),
-          ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'BrainBoost',
+                style: AppTextStyles.headingLarge.copyWith(
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Sharpen your memory',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.grey,
+                ),
+              ),
+              const SizedBox(height: 32),
+              const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                strokeWidth: 2,
+              ),
+            ],
+          ),
         ),
       ),
     );

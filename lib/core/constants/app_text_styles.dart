@@ -60,6 +60,7 @@ class AppTextStyles {
     fontFamily: 'Poppins',
     color: AppColors.grey,
   );
+  
 
   // Buttons
   static const TextStyle buttonLarge = TextStyle(

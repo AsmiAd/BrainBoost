@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart'; // Use your defined colors
-import '../screens/auth/login_screen.dart'; // Replace with actual route if needed
+import '../../../core/theme/app_colors.dart'; // Use your defined colors
+import '../auth/login_screen.dart'; // Replace with actual route if needed
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -34,14 +34,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void navigateToNext() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()), 
+      MaterialPageRoute(builder: (_) => LoginScreen()), 
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         children: [
           Expanded(

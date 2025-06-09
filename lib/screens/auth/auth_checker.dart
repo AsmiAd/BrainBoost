@@ -1,0 +1,31 @@
+import 'package:brain_boost/screens/auth/login_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../home/home_screen.dart';
+
+class AuthChecker extends StatelessWidget {
+  const AuthChecker({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasData) {
+          // User is logged in
+          return const HomeScreen(); // Replace with your actual home screen
+        } else {
+          // User is NOT logged in
+          return const LoginScreen();
+        }
+      },
+    );
+  }
+}
