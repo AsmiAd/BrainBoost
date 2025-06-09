@@ -3,6 +3,7 @@ import 'package:brain_boost/screens/auth/register_screen.dart';
 import 'package:brain_boost/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 
+
 class LoginScreen extends StatefulWidget {
   @override
   State<LoginScreen> createState() => _LoginPageState();
@@ -12,6 +13,7 @@ class _LoginPageState extends State<LoginScreen> {
   bool _obscurePassword = true;
 
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF3E0),
