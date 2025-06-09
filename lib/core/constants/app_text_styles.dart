@@ -92,7 +92,7 @@ class AppTextStyles {
   );
 
   // TextTheme for Material App
-  static final TextTheme textTheme = TextTheme(
+  static final TextTheme textTheme = const TextTheme(
   displayLarge: AppTextStyles.headingLarge,
   displayMedium: AppTextStyles.headingMedium,
   displaySmall: AppTextStyles.headingSmall,
