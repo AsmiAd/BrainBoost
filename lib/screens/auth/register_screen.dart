@@ -1,28 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:brain_boost/core/theme/app_colors.dart';
+import 'package:brain_boost/services/auth_service.dart';
+import 'package:brain_boost/utils/validators.dart';
+import '../../widgets/custom_text_field.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterPageState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterPageState extends State<RegisterScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  final _authService = AuthService();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _onRegisterPressed() async {
+    if (_formKey.currentState!.validate()) {
+      final username = _usernameController.text.trim();
+      final email = _emailController.text.trim();
+      final password = _passwordController.text;
+
+      try {
+        final user = await _authService.signUpWithEmail(email, password,username);
+
+        if (user != null) {
+          // Save username and email to Firestore
+          await _authService.saveUserToFirestore(user.uid, username, email);
+
+          // Navigate to home or show success
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Account created successfully')),
+            );
+            Navigator.pushReplacementNamed(context, '/login'); // Go back to login
+          }
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF3E0),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
             child: Column(
@@ -30,146 +74,108 @@ class _RegisterPageState extends State<RegisterScreen> {
               children: [
                 IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.arrow_back, color: Colors.black),
+                  icon: const Icon(Icons.arrow_back),
                 ),
                 const SizedBox(height: 20),
-
                 const Center(
                   child: Text(
                     'Create Account',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF4E342E),
+                      color: AppColors.primary,
                     ),
                   ),
                 ),
                 const SizedBox(height: 30),
 
-                const Text('EMAIL', style: TextStyle(color: Color(0xFF4E342E))),
-                TextFormField(
+                CustomTextField(
+                  controller: _usernameController,
+                  label: 'USERNAME',
+                  hint: 'Your name',
+                  validator: validateUsername,
+                ),
+
+                CustomTextField(
                   controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  style: const TextStyle(color: Color(0xFF4E342E)),
-                  decoration: const InputDecoration(
-                    hintText: 'name@email.com',
-                    hintStyle: TextStyle(color: Colors.grey),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF4E342E)),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Email is required';
-                    }
-                    return null;
-                  },
+                  label: 'EMAIL',
+                  hint: 'name@gmail.com',
+                  validator: validateEmail,
                 ),
-                const SizedBox(height: 20),
 
-                const Text('PASSWORD', style: TextStyle(color: Color(0xFF4E342E))),
-                TextFormField(
+                CustomTextField(
                   controller: _passwordController,
+                  label: 'PASSWORD',
+                  hint: '*******',
                   obscureText: _obscurePassword,
-                  style: const TextStyle(color: Color(0xFF4E342E)),
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    enabledBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF4E342E)),
+                  validator: validatePassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      color: AppColors.primary,
                     ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                        color: const Color(0xFF4E342E),
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
+                    onPressed: () {
+                      setState(() => _obscurePassword = !_obscurePassword);
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Password is required';
-                    }
-                    return null;
-                  },
                 ),
-                const SizedBox(height: 20),
 
-                const Text('CONFIRM PASSWORD', style: TextStyle(color: Color(0xFF4E342E))),
-                TextFormField(
+                CustomTextField(
                   controller: _confirmPasswordController,
+                  label: 'CONFIRM PASSWORD',
+                  hint: '********',
                   obscureText: _obscureConfirmPassword,
-                  style: const TextStyle(color: Color(0xFF4E342E)),
-                  decoration: InputDecoration(
-                    hintText: 'Confirm Password',
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    enabledBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF4E342E)),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
-                        color: const Color(0xFF4E342E),
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureConfirmPassword = !_obscureConfirmPassword;
-                        });
-                      },
-                    ),
-                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Confirm your password';
-                    } else if (value != _passwordController.text) {
+                    }
+                    if (value != _passwordController.text) {
                       return 'Passwords do not match';
                     }
                     return null;
                   },
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                      color: AppColors.primary,
+                    ),
+                    onPressed: () {
+                      setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
+                    },
+                  ),
                 ),
-                const SizedBox(height: 30),
 
+                const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Registering...')),
-                        );
-                      }
-                    },
+                    onPressed: _onRegisterPressed,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      foregroundColor: const Color(0xFF4E342E),
-                      shape: const StadiumBorder(),
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     child: const Text('REGISTER'),
                   ),
                 ),
-                const SizedBox(height: 10),
+
+                const SizedBox(height: 24),
 
                 Center(
                   child: GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: RichText(
-                      text: const TextSpan(
+                    onTap: () => Navigator.pushReplacementNamed(context, '/login'),
+                    child: Text.rich(
+                      TextSpan(
                         text: 'Already have an account? ',
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(color: AppColors.grey),
                         children: [
                           TextSpan(
                             text: 'Login',
                             style: TextStyle(
-                              color: Color(0xFF4E342E),
+                              color: AppColors.primary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -178,33 +184,52 @@ class _RegisterPageState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
-                  SizedBox(height: 20,),
-                 TextButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.g_mobiledata,
-                    size: 30, color: Color(0xFF4E342E)),
-                label: Text(
-                  'Continue with Google',
-                  style: TextStyle(color: Color(0xFF4E342E)),
+
+                const SizedBox(height: 24),
+                Row(
+                  children: const [
+                    Expanded(child: Divider()),
+                    SizedBox(width: 10),
+                    Text("OR", style: TextStyle(color: AppColors.grey)),
+                    SizedBox(width: 10),
+                    Expanded(child: Divider()),
+                  ],
                 ),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  minimumSize: Size(double.infinity, 0),
+                const SizedBox(height: 24),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      final user = await _authService.signInWithGoogle();
+                      if (user != null && mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Signed in with Google')),
+                        );
+                        Navigator.pop(context);
+                      }
+                    },
+                    icon: const Icon(Icons.g_mobiledata),
+                    label: const Text("Continue with Google"),
+                  ),
                 ),
-              ),
-               TextButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.email_outlined,
-                    size: 20, color: Color(0xFF4E342E)),
-                label: Text(
-                  'Continue with Email',
-                  style: TextStyle(color: Color(0xFF4E342E)),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      final user = await _authService.signInWithGoogle();
+                      if (user != null && mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Signed in with Gmail')),
+                        );
+                        Navigator.pop(context);
+                      }
+                    },
+                    icon: const Icon(Icons.mail),
+                    label: const Text("Continue with Gmail"),
+                  ),
                 ),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 5),
-                  minimumSize: Size(double.infinity, 0),
-                ),
-              ),
               ],
             ),
           ),
