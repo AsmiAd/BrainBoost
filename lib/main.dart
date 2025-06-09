@@ -32,7 +32,9 @@ class BrainBoostApp extends ConsumerWidget {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           data: Theme.of(context), // Gets the current theme based on themeMode
+
           child: const SplashScreen(), // Replace with your initial screen
+
         ),
       ),
     );
