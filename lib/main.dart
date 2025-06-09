@@ -1,3 +1,4 @@
+import 'package:brain_boost/screens/auth/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,7 +33,7 @@ class BrainBoostApp extends ConsumerWidget {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           data: Theme.of(context), // Gets the current theme based on themeMode
-          child: const HomeScreen(),
+          child:  LoginScreen(),
         ),
       ),
     );
