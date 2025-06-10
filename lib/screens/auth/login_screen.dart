@@ -210,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       // Continue with Google
                       _buildSocialButton(
-                        iconPath: 'assets/icons/google.png',
+                        iconPath: 'assets/images/google.png',
                         label: 'Continue with Google',
                         onPressed: _loginWithGoogle,
                       ),
@@ -218,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       // Continue with Gmail (same as Google for now)
                       _buildSocialButton(
-                        iconPath: 'assets/icons/gmail.png',
+                        iconPath: 'assets/images/gmail.png',
                         label: 'Continue with Gmail',
                         onPressed: _loginWithGoogle,
                       ),
