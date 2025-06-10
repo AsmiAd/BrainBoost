@@ -3,7 +3,6 @@ import 'package:brain_boost/screens/nav/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../home/home_screen.dart';
 
 class AuthChecker extends StatelessWidget {
   const AuthChecker({super.key});
