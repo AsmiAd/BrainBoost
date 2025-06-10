@@ -103,8 +103,8 @@ class _SplashScreenState extends State<SplashScreen>
                   );
                 },
                 child: SizedBox(
-                  width: screenHeight * 0.2,
-                  height: screenHeight * 0.2,
+                  width: screenHeight * 0.5,
+                  height: screenHeight * 0.5,
                   child: Image.asset(
                     'assets/images/splash_logo.png',
                     filterQuality: FilterQuality.high,
@@ -121,19 +121,6 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ),
               const SizedBox(height: 24),
-              Text(
-                'BrainBoost',
-                style: AppTextStyles.headingLarge.copyWith(
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Sharpen your memory',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.grey,
-                ),
-              ),
               const SizedBox(height: 32),
               const CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
