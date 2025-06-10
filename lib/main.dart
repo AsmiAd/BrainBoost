@@ -1,3 +1,4 @@
+import 'package:brain_boost/screens/nav/main_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,7 +34,7 @@ class BrainBoostApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
       routes: {
-        
+        '/main_screen': (_) => const MainScreen(), // Replace with your main screen
         '/register': (_) => const RegisterScreen(),
         '/forgot-password': (_) => const ForgotPasswordScreen(),
         '/auth': (context) => const AuthChecker(),

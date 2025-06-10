@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
           _emailController.text.trim(), _passwordController.text);
       if (user != null) {
         // Login successful, navigate to home or auth checker will handle it
-        Navigator.of(context).pushReplacementNamed('/home');
+        Navigator.of(context).pushReplacementNamed('/main_screen');
       }
     } on FirebaseAuthException catch (e) {
       _showError(e.message ?? 'Login failed');
@@ -210,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       // Continue with Google
                       _buildSocialButton(
-                        iconPath: 'assets/icons/google.png',
+                        iconPath: 'assets/images/google.png',
                         label: 'Continue with Google',
                         onPressed: _loginWithGoogle,
                       ),
@@ -218,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       // Continue with Gmail (same as Google for now)
                       _buildSocialButton(
-                        iconPath: 'assets/icons/gmail.png',
+                        iconPath: 'assets/images/gmail.png',
                         label: 'Continue with Gmail',
                         onPressed: _loginWithGoogle,
                       ),
