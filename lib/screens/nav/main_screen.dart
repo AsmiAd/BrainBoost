@@ -1,6 +1,7 @@
 import 'package:brain_boost/screens/add/add_screen.dart';
 import 'package:brain_boost/screens/home/home_screen.dart';
 import 'package:brain_boost/screens/profile/profile_screen.dart';
+import 'package:brain_boost/screens/search/search_screen.dart';
 import 'package:brain_boost/screens/statistic/statistic_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +16,13 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
     List<Widget> data = [
     const HomeScreen(),
-    const ProfileScreen(),
-    const StatisticScreen(),
+    SearchScreen(),
     const AddScreen(),
+
+
+    const StatisticScreen(),
+    const ProfileScreen(),
+
   ];
 
 
@@ -48,11 +53,12 @@ class _MainScreenState extends State<MainScreen> {
       ),
     ];
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: data[index],
       
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.transparent,
+        
         height: 60, 
         index: index,
         items: items,

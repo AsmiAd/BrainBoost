@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 class AddScreen extends StatelessWidget {
   const AddScreen({super.key});
 
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add'),
+        title: const Text('Add', style: TextStyle(color: Colors.black, fontSize: 20),),
       ),
     );
   }
