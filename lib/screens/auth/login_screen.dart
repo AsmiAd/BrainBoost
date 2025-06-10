@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       CustomTextField(
                         controller: _emailController,
                         label: 'EMAIL',
-                        hint: 'name@email.com',
+                        hint: 'name@gmail.com',
                         validator: (value) => value == null || value.isEmpty
                             ? 'Email is required'
                             : null,
