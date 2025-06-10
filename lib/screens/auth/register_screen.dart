@@ -209,7 +209,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Navigator.pop(context);
                       }
                     },
-                    icon: const Icon(Icons.g_mobiledata),
+                    icon: Image.asset("images/google.png", height: 20,),
                     label: const Text("Continue with Google"),
                   ),
                 ),
@@ -226,7 +226,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Navigator.pop(context);
                       }
                     },
-                    icon: const Icon(Icons.mail),
+                    icon: Image.asset("images/gmail.png",height: 20,),
                     label: const Text("Continue with Gmail"),
                   ),
                 ),
