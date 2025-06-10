@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:brain_boost/screens/auth/auth_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../core/constants/app_text_styles.dart';
 import '../../core/theme/app_colors.dart';
 import '../onboarding/onboarding_screen.dart';
 
