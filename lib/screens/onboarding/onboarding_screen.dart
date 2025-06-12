@@ -17,17 +17,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     {
       "title": "Welcome to BrainBoost",
       "description": "Sharpen your memory with interactive flashcards!",
-      "image": "assets/images/order.png"
+      "image": "assets/images/sharp brain.png"
     },
     {
       "title": "Track Your Progress",
       "description": "Stay motivated with goals and achievements.",
-      "image": "assets/images/payments.png"
+      "image": "assets/images/progress.png"
     },
     {
       "title": "Learn Anytime, Anywhere",
       "description": "Offline study, voice input, and more!",
-      "image": "assets/images/delivery.png"
+      "image": "assets/images/learn anywhere.png"
     },
   ];
 
