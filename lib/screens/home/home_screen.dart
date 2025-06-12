@@ -92,8 +92,8 @@ class HomeScreen extends ConsumerWidget {
       actions: [
         IconButton(
           icon: Badge(
-            child: const Icon(Icons.notifications_none),
             smallSize: 8,
+            child: const Icon(Icons.notifications_none),
           ),
           onPressed: () => _showNotifications(context),
         ),
@@ -102,10 +102,9 @@ class HomeScreen extends ConsumerWidget {
   }
 
   void _showNotifications(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Notifications feature coming soon!')),
-    );
-  }
+  Navigator.pushNamed(context, '/notifications');
+}
+
 
   Widget _buildSearchBar(BuildContext context) => TextField(
         decoration: InputDecoration(

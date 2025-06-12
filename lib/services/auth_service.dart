@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -15,22 +16,22 @@ class AuthService {
 
   /// Email registration with username
   Future<User?> signUpWithEmail(
-      String email, String password, String username) async {
-    final credential = await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    final user = credential.user;
+    String email, String password, String username) async {
+  final credential = await _auth.createUserWithEmailAndPassword(
+      email: email, password: password);
+  final user = credential.user;
 
-    if (user != null) {
-      await _firestore.collection('users').doc(user.uid).set({
-        'uid': user.uid,
-        'email': user.email,
-        'username': username,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-    }
-
-    return user;
+  if (user != null) {
+    await _firestore.collection('users').doc(user.uid).set({
+      'uid': user.uid,
+      'email': user.email,
+      'username': username,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
   }
+
+  return user;
+}
 
   Future<void> saveUserToFirestore(
       String uid, String username, String email) async {
@@ -45,11 +46,18 @@ class AuthService {
   final user = FirebaseAuth.instance.currentUser;
   if (user != null) {
     final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-    if (doc.exists && doc.data()!.containsKey('username')) {
-      return doc['username'];
+    if (doc.exists) {
+      final data = doc.data();
+      if (data != null && data.containsKey('username')) {
+        return data['username'];
+      } else {
+        throw Exception('Username field not found in document for ${user.uid}');
+      }
+    } else {
+      throw Exception('User document not found for ${user.uid}');
     }
   }
-  return 'User';
+  throw Exception('No user is currently signed in');
 }
 
 
@@ -85,11 +93,16 @@ class AuthService {
           'username': user.displayName ?? 'No Name',
           'createdAt': FieldValue.serverTimestamp(),
         });
-      }
+        
+      debugPrint("Google user signed in. Firestore document written for: ${user.uid}");
+    } else {
+      /// Optional: Print if user already existed
+      debugPrint("Google user signed in. Firestore document already exists for: ${user.uid}");
     }
-
-    return user;
   }
+
+  return user;
+}
 
   /// Sign out
   Future<void> signOut() async {
