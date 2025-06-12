@@ -20,6 +20,7 @@ class _MainScreenState extends State<MainScreen> {
     const AddScreen(),
     const StatisticScreen(),
     const ProfileScreen(),
+
   ];
 
   int index = 0;
