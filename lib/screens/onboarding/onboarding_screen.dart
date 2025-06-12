@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart'; // Use your defined colors
-import '../auth/login_screen.dart'; // Replace with actual route if needed
+import '../../core/constants/app_colors.dart'; 
+import '../auth/login_screen.dart'; 
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -17,24 +17,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     {
       "title": "Welcome to BrainBoost",
       "description": "Sharpen your memory with interactive flashcards!",
-      "image": "assets/images/order.png"
+      "image": "assets/images/sharp brain.png"
     },
     {
       "title": "Track Your Progress",
       "description": "Stay motivated with goals and achievements.",
-      "image": "assets/images/payments.png"
+      "image": "assets/images/progress.png"
     },
     {
       "title": "Learn Anytime, Anywhere",
       "description": "Offline study, voice input, and more!",
-      "image": "assets/images/delivery.png"
+      "image": "assets/images/learn anywhere.png"
     },
   ];
 
   void navigateToNext() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => LoginScreen()), 
+      MaterialPageRoute(builder: (_) => LoginScreen()),
     );
   }
 
@@ -84,10 +84,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,
                 minimumSize: const Size(double.infinity, 50),
-                textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                textStyle:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               child: Text(
-                _currentPage == onboardingData.length - 1 ? "Get Started" : "Next",
+                _currentPage == onboardingData.length - 1
+                    ? "Get Started"
+                    : "Next",
               ),
             ),
           ),

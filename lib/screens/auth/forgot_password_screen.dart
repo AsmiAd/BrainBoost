@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:brain_boost/core/theme/app_colors.dart';
+import 'package:brain_boost/core/constants/app_colors.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../services/auth_service.dart';
 
@@ -75,7 +75,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-
               CustomTextField(
                 controller: _emailController,
                 label: 'EMAIL',
@@ -84,7 +83,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     value == null || value.isEmpty ? 'Email is required' : null,
               ),
               const SizedBox(height: 32),
-
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -100,7 +98,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   child: const Text('CONTINUE'),
                 ),
               ),
-
               const SizedBox(height: 24),
               Center(
                 child: GestureDetector(

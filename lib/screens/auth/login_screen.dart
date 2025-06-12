@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../core/constants/app_colors.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../services/auth_service.dart';
 
@@ -35,8 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await _authService.signInWithEmail(
           _emailController.text.trim(), _passwordController.text);
       if (user != null) {
-        // Login successful, navigate to home or auth checker will handle it
-        Navigator.of(context).pushReplacementNamed('/home');
+        Navigator.of(context).pushReplacementNamed('/main_screen');
       }
     } on FirebaseAuthException catch (e) {
       _showError(e.message ?? 'Login failed');
@@ -98,18 +97,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 32),
 
-                      // Email field
                       CustomTextField(
                         controller: _emailController,
                         label: 'EMAIL',
-                        hint: 'name@email.com',
+                        hint: 'name@gmail.com',
                         validator: (value) => value == null || value.isEmpty
                             ? 'Email is required'
                             : null,
                       ),
                       const SizedBox(height: 16),
 
-                      // Password field
                       CustomTextField(
                         controller: _passwordController,
                         label: 'PASSWORD',
@@ -133,7 +130,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
 
-                      // Forgot Password
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
@@ -151,7 +147,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 8),
 
-                      // Login button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -167,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Don't have account
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -189,7 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Divider with OR
                       Row(
                         children: const [
                           Expanded(
@@ -208,17 +201,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Continue with Google
+                      
                       _buildSocialButton(
-                        iconPath: 'assets/icons/google.png',
+                        iconPath: 'assets/images/google.png',
                         label: 'Continue with Google',
                         onPressed: _loginWithGoogle,
                       ),
                       const SizedBox(height: 12),
 
-                      // Continue with Gmail (same as Google for now)
                       _buildSocialButton(
-                        iconPath: 'assets/icons/gmail.png',
+                        iconPath: 'assets/images/gmail.png',
                         label: 'Continue with Gmail',
                         onPressed: _loginWithGoogle,
                       ),

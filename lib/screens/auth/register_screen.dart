@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:brain_boost/core/theme/app_colors.dart';
+import 'package:brain_boost/core/constants/app_colors.dart';
 import 'package:brain_boost/services/auth_service.dart';
 import 'package:brain_boost/utils/validators.dart';
 import '../../widgets/custom_text_field.dart';
@@ -38,18 +38,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final password = _passwordController.text;
 
       try {
-        final user = await _authService.signUpWithEmail(email, password,username);
+        final user = await _authService.signUpWithEmail(email, password, username);
 
         if (user != null) {
-          // Save username and email to Firestore
-          await _authService.saveUserToFirestore(user.uid, username, email);
 
-          // Navigate to home or show success
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Account created successfully')),
             );
-            Navigator.pushReplacementNamed(context, '/login'); // Go back to login
+            Navigator.pushReplacementNamed(context, '/login');
           }
         }
       } catch (e) {
@@ -88,21 +85,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 const SizedBox(height: 30),
-
                 CustomTextField(
                   controller: _usernameController,
                   label: 'USERNAME',
                   hint: 'Your name',
                   validator: validateUsername,
                 ),
-
                 CustomTextField(
                   controller: _emailController,
                   label: 'EMAIL',
                   hint: 'name@gmail.com',
                   validator: validateEmail,
                 ),
-
                 CustomTextField(
                   controller: _passwordController,
                   label: 'PASSWORD',
@@ -119,7 +113,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                 ),
-
                 CustomTextField(
                   controller: _confirmPasswordController,
                   label: 'CONFIRM PASSWORD',
@@ -144,7 +137,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                 ),
-
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
@@ -161,9 +153,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: const Text('REGISTER'),
                   ),
                 ),
-
                 const SizedBox(height: 24),
-
                 Center(
                   child: GestureDetector(
                     onTap: () => Navigator.pushReplacementNamed(context, '/login'),
@@ -184,7 +174,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 24),
                 Row(
                   children: const [
@@ -196,7 +185,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
@@ -209,25 +197,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Navigator.pop(context);
                       }
                     },
-                    icon: const Icon(Icons.g_mobiledata),
+                    icon: Image.asset(
+                      "images/google.png",
+                      height: 20,
+                    ),
                     label: const Text("Continue with Google"),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () async {
-                      final user = await _authService.signInWithGoogle();
-                      if (user != null && mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Signed in with Gmail')),
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
-                    icon: const Icon(Icons.mail),
-                    label: const Text("Continue with Gmail"),
                   ),
                 ),
               ],

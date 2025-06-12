@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
+class Flashcard {
+  final String id;
+  final String question;
+  final String answer;
 
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
+  Flashcard({
+    required this.id,
+    required this.question,
+    required this.answer,
+  });
 }
