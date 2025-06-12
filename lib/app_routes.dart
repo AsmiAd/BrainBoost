@@ -1,3 +1,4 @@
+import 'package:brain_boost/screens/notifications/notification_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/auth/auth_checker.dart';
 import '../screens/auth/forgot_password_screen.dart';
@@ -34,6 +35,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case '/home':
         return MaterialPageRoute(builder: (_) => const HomeScreen());
+      case '/notifications':
+        return MaterialPageRoute(builder: (_) => const NotificationScreen());
       case '/deck-details':
         final deckId = settings.arguments as String;
         return MaterialPageRoute(
