@@ -42,7 +42,6 @@ class BrainBoostApp extends ConsumerWidget {
       home: Builder(
         builder: (context) => AnimatedTheme(
           duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
           data: Theme.of(context),
           child: const SplashScreen(),
         ),
