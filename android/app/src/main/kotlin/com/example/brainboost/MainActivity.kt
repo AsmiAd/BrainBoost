@@ -1,4 +1,4 @@
-package com.example.brain_boost
+package com.flashcard.brainboost
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart'; // Use your defined colors
-import '../auth/login_screen.dart'; // Replace with actual route if needed
+import '../../../core/theme/app_colors.dart'; 
+import '../auth/login_screen.dart'; 
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -34,7 +34,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void navigateToNext() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => LoginScreen()), 
+      MaterialPageRoute(builder: (_) => LoginScreen()),
     );
   }
 
@@ -84,10 +84,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,
                 minimumSize: const Size(double.infinity, 50),
-                textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                textStyle:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               child: Text(
-                _currentPage == onboardingData.length - 1 ? "Get Started" : "Next",
+                _currentPage == onboardingData.length - 1
+                    ? "Get Started"
+                    : "Next",
               ),
             ),
           ),

@@ -38,7 +38,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final password = _passwordController.text;
 
       try {
-        final user = await _authService.signUpWithEmail(email, password,username);
+        final user =
+            await _authService.signUpWithEmail(email, password, username);
 
         if (user != null) {
           // Save username and email to Firestore
@@ -49,7 +50,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Account created successfully')),
             );
-            Navigator.pushReplacementNamed(context, '/login'); // Go back to login
+            Navigator.pushReplacementNamed(
+                context, '/login'); // Go back to login
           }
         }
       } catch (e) {
@@ -88,21 +90,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 const SizedBox(height: 30),
-
                 CustomTextField(
                   controller: _usernameController,
                   label: 'USERNAME',
                   hint: 'Your name',
                   validator: validateUsername,
                 ),
-
                 CustomTextField(
                   controller: _emailController,
                   label: 'EMAIL',
                   hint: 'name@gmail.com',
                   validator: validateEmail,
                 ),
-
                 CustomTextField(
                   controller: _passwordController,
                   label: 'PASSWORD',
@@ -111,7 +110,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   validator: validatePassword,
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       color: AppColors.primary,
                     ),
                     onPressed: () {
@@ -119,7 +120,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                 ),
-
                 CustomTextField(
                   controller: _confirmPasswordController,
                   label: 'CONFIRM PASSWORD',
@@ -136,15 +136,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   },
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                      _obscureConfirmPassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       color: AppColors.primary,
                     ),
                     onPressed: () {
-                      setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
+                      setState(() =>
+                          _obscureConfirmPassword = !_obscureConfirmPassword);
                     },
                   ),
                 ),
-
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
@@ -161,12 +163,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: const Text('REGISTER'),
                   ),
                 ),
-
                 const SizedBox(height: 24),
-
                 Center(
                   child: GestureDetector(
-                    onTap: () => Navigator.pushReplacementNamed(context, '/login'),
+                    onTap: () =>
+                        Navigator.pushReplacementNamed(context, '/login'),
                     child: Text.rich(
                       TextSpan(
                         text: 'Already have an account? ',
@@ -184,7 +185,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 24),
                 Row(
                   children: const [
@@ -196,7 +196,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
@@ -204,12 +203,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       final user = await _authService.signInWithGoogle();
                       if (user != null && mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Signed in with Google')),
+                          const SnackBar(
+                              content: Text('Signed in with Google')),
                         );
                         Navigator.pop(context);
                       }
                     },
-                    icon: Image.asset("images/google.png", height: 20,),
+                    icon: Image.asset(
+                      "images/google.png",
+                      height: 20,
+                    ),
                     label: const Text("Continue with Google"),
                   ),
                 ),
@@ -226,7 +229,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Navigator.pop(context);
                       }
                     },
-                    icon: Image.asset("images/gmail.png",height: 20,),
+                    icon: Image.asset(
+                      "images/gmail.png",
+                      height: 20,
+                    ),
                     label: const Text("Continue with Gmail"),
                   ),
                 ),
