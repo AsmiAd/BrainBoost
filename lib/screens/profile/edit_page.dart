@@ -1,5 +1,7 @@
-import 'package:brain_boost/core/theme/app_colors.dart';
+
 import 'package:flutter/material.dart';
+
+import '../../core/constants/app_colors.dart';
 
 class EditPage extends StatelessWidget {
   const EditPage({super.key});

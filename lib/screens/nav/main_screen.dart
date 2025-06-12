@@ -5,6 +5,7 @@ import 'package:brain_boost/screens/search/search_screen.dart';
 import 'package:brain_boost/screens/statistic/statistic_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:brain_boost/core/constants/app_colors.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -14,50 +15,47 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  List<Widget> data = [
-    const HomeScreen(),
+  final List<Widget> _screens = const [
+    HomeScreen(),
     SearchScreen(),
-    const AddScreen(),
-    const StatisticScreen(),
-    const ProfileScreen(),
-
+    AddScreen(),
+    StatisticScreen(),
+    ProfileScreen(),
   ];
 
-  int index = 0;
+  final List<IconData> _navIcons = [
+    Icons.home,
+    Icons.search,
+    Icons.add,
+    Icons.bar_chart,
+    Icons.person,
+  ];
+
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    final items = <Widget>[
-      Icon(
-        Icons.home,
-        size: 30,
-      ),
-      Icon(
-        Icons.search,
-        size: 30,
-      ),
-      Icon(
-        Icons.add,
-        size: 30,
-      ),
-      Icon(
-        Icons.bar_chart,
-        size: 30,
-      ),
-      Icon(
-        Icons.person,
-        size: 30,
-      ),
-    ];
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: data[index],
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.transparent,
+      extendBody: true, // Important for curved nav bar transparency
+      body: _screens[_currentIndex],
+      bottomNavigationBar: _buildCurvedNavBar(),
+    );
+  }
+
+  Widget _buildCurvedNavBar() {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        canvasColor: Colors.transparent, // Removes white background
+      ),
+      child: CurvedNavigationBar(
+        index: _currentIndex,
         height: 60,
-        index: index,
-        items: items,
-        onTap: (newIndex) => setState(() => index = newIndex),
+        color: AppColors.primary,
+        buttonBackgroundColor: AppColors.primary.withOpacity(0.8),
+        backgroundColor: Colors.transparent,
+        animationDuration: const Duration(milliseconds: 300),
+        items: _navIcons.map((icon) => Icon(icon, size: 30)).toList(),
+        onTap: (index) => setState(() => _currentIndex = index),
       ),
     );
   }

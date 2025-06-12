@@ -1,8 +1,9 @@
-import 'package:brain_boost/core/theme/app_colors.dart';
 import 'package:brain_boost/screens/profile/edit_page.dart';
 import 'package:brain_boost/screens/profile/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import '../../core/constants/app_colors.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
