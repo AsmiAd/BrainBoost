@@ -14,13 +14,12 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  List<Widget> data = [
+  final List<Widget> data = [
     const HomeScreen(),
-    SearchScreen(),
+    const SearchScreen(),
     const AddScreen(),
-    const StatisticScreen(),
+     StatisticScreen(),
     const ProfileScreen(),
-
   ];
 
   int index = 0;

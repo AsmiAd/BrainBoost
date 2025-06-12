@@ -35,7 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await _authService.signInWithEmail(
           _emailController.text.trim(), _passwordController.text);
       if (user != null) {
-        // Login successful, navigate to home or auth checker will handle it
         Navigator.of(context).pushReplacementNamed('/main_screen');
       }
     } on FirebaseAuthException catch (e) {
@@ -98,7 +97,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 32),
 
-                      // Email field
                       CustomTextField(
                         controller: _emailController,
                         label: 'EMAIL',
@@ -109,7 +107,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Password field
                       CustomTextField(
                         controller: _passwordController,
                         label: 'PASSWORD',
@@ -133,7 +130,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
 
-                      // Forgot Password
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
@@ -151,7 +147,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 8),
 
-                      // Login button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -167,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Don't have account
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -189,7 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Divider with OR
                       Row(
                         children: const [
                           Expanded(
@@ -208,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Continue with Google
+                      
                       _buildSocialButton(
                         iconPath: 'assets/images/google.png',
                         label: 'Continue with Google',
@@ -216,7 +209,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 12),
 
-                      // Continue with Gmail (same as Google for now)
                       _buildSocialButton(
                         iconPath: 'assets/images/gmail.png',
                         label: 'Continue with Gmail',
