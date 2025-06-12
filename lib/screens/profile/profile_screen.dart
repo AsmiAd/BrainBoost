@@ -50,9 +50,11 @@ class ProfileScreen extends ConsumerWidget {
             color: AppColors.primary,
           ),
         ],
-        title: Text(
-          "Profile",
-          style: AppTextStyles.headingSmall.copyWith(color: AppColors.primary),
+        title: Center(
+          child: Text(
+            "Profile",
+            style: AppTextStyles.headingSmall.copyWith(color: AppColors.primary),
+          ),
         ),
         iconTheme: const IconThemeData(color: AppColors.primary),
       ),
@@ -61,7 +63,7 @@ class ProfileScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              const Divider(),
+  
               Row(
                 children: [
                   const CircleAvatar(

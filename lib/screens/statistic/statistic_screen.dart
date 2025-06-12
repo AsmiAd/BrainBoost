@@ -1,4 +1,4 @@
-import 'package:brain_boost/core/theme/app_colors.dart';
+import 'package:brain_boost/core/constants/app_colors.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart'
     as charts;
 import 'package:flutter/material.dart';

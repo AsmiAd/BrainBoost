@@ -24,7 +24,7 @@ final recentDecksProvider = FutureProvider.autoDispose<List<Deck>>((ref) async {
   } catch (e) {
     final cached = await localStorage.getCachedDecks();
     if (cached != null) return cached;
-    throw e;
+    rethrow;
   }
 });
 
