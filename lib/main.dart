@@ -26,7 +26,7 @@ class BrainBoostApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
-    
+
     return MaterialApp(
       title: 'BrainBoost',
       debugShowCheckedModeBanner: false,
@@ -34,23 +34,19 @@ class BrainBoostApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
       routes: {
-        '/main_screen': (_) => const MainScreen(), // Replace with your main screen
+        '/main_screen': (_) => const MainScreen(),
         '/register': (_) => const RegisterScreen(),
         '/forgot-password': (_) => const ForgotPasswordScreen(),
         '/auth': (context) => const AuthChecker(),
         '/login': (context) => const LoginScreen(),
-        '/home': (_) => const HomeScreen(), // <--- your HomeScreen here
-},
+        '/home': (_) => const HomeScreen(),
+      },
       home: Builder(
         builder: (context) => AnimatedTheme(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          data: Theme.of(context), // Gets the current theme based on themeMode
-
-          child: const SplashScreen(), // Replace with your initial screen
-
-          
-
+          data: Theme.of(context),
+          child: const SplashScreen(),
         ),
       ),
     );

@@ -8,13 +8,16 @@ class AuthService {
 
   /// Email login
   Future<User?> signInWithEmail(String email, String password) async {
-    final credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+    final credential = await _auth.signInWithEmailAndPassword(
+        email: email, password: password);
     return credential.user;
   }
 
   /// Email registration with username
-  Future<User?> signUpWithEmail(String email, String password, String username) async {
-    final credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+  Future<User?> signUpWithEmail(
+      String email, String password, String username) async {
+    final credential = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
     final user = credential.user;
 
     if (user != null) {
@@ -29,13 +32,26 @@ class AuthService {
     return user;
   }
 
-  Future<void> saveUserToFirestore(String uid, String username, String email) async {
-  await _firestore.collection('users').doc(uid).set({
-    'username': username,
-    'email': email,
-    'createdAt': FieldValue.serverTimestamp(),
-  });
+  Future<void> saveUserToFirestore(
+      String uid, String username, String email) async {
+    await _firestore.collection('users').doc(uid).set({
+      'username': username,
+      'email': email,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<String> getUsernameFromFirestore() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+    if (doc.exists && doc.data()!.containsKey('username')) {
+      return doc['username'];
+    }
+  }
+  return 'User';
 }
+
 
   /// Reset password
   Future<void> sendPasswordResetEmail(String email) async {
@@ -47,7 +63,8 @@ class AuthService {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     if (googleUser == null) return null; // user canceled
 
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,

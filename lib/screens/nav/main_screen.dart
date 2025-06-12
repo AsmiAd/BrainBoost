@@ -14,17 +14,13 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-    List<Widget> data = [
+  List<Widget> data = [
     const HomeScreen(),
     SearchScreen(),
     const AddScreen(),
-
-
     const StatisticScreen(),
     const ProfileScreen(),
-
   ];
-
 
   int index = 0;
 
@@ -34,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
       Icon(
         Icons.home,
         size: 30,
-      ), 
+      ),
       Icon(
         Icons.search,
         size: 30,
@@ -55,11 +51,9 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: data[index],
-      
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.transparent,
-        
-        height: 60, 
+        height: 60,
         index: index,
         items: items,
         onTap: (newIndex) => setState(() => index = newIndex),
