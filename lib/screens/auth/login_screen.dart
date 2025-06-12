@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../core/constants/app_colors.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../services/auth_service.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:brain_boost/core/theme/app_colors.dart';
+import 'package:brain_boost/core/constants/app_colors.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../services/auth_service.dart';
 
