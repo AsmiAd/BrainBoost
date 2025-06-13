@@ -1,5 +1,6 @@
 import 'package:brain_boost/screens/profile/edit_page.dart';
 import 'package:brain_boost/screens/profile/settings_page.dart';
+import 'package:brain_boost/screens/setting/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -117,7 +118,7 @@ class ProfileScreen extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const SettingsPage()),
+                        builder: (context) => const SettingsScreen()),
                   );
                 },
               ),

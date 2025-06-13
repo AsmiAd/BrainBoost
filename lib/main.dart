@@ -18,7 +18,7 @@ void main() async {
 
   // Run the app with ProviderScope for state management
   runApp( ProviderScope(
-      child: BrainBoostApp(), // remove `const` here (Riverpod prefers dynamic instantiation)
+      child: BrainBoostApp(), // Riverpod prefers dynamic instantiation
     ),);
 }
 
