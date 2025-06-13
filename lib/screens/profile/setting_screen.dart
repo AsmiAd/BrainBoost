@@ -1,4 +1,3 @@
-import 'package:brain_boost/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -29,12 +28,12 @@ class SettingsScreen extends StatelessWidget {
       subtitle: 'Themes • Reviewer',
     ),
     SettingsItem(
-      icon: Icons.touch_app,
+      icon: Icons.gamepad,
       title: 'Controls',
       subtitle: 'Gestures • Keyboard • Bluetooth',
     ),
     SettingsItem(
-      icon: Icons.accessibility,
+      icon: Icons.accessibility_new,
       title: 'Accessibility',
       subtitle: 'Card zoom • Answer button size',
     ),
@@ -48,14 +47,11 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
-        title: Text(
-          'Settings',
-          style: TextStyle(color: AppColors.text),
-        ),
-        leading: BackButton(color: AppColors.text),
+        backgroundColor: Colors.black,
+        title: Text('Settings', style: TextStyle(color: Colors.white)),
+        leading: BackButton(color: Colors.white),
         elevation: 0,
       ),
       body: Column(
@@ -63,13 +59,13 @@ class SettingsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
             child: TextField(
-              style: TextStyle(color: AppColors.text),
+              style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Search...',
-                hintStyle: TextStyle(color: AppColors.grey),
+                hintStyle: TextStyle(color: Colors.white70),
                 filled: true,
-                fillColor: AppColors.white,
-                prefixIcon: Icon(Icons.search, color: AppColors.grey),
+                fillColor: Colors.grey[900],
+                prefixIcon: Icon(Icons.search, color: Colors.white70),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide.none,
@@ -82,30 +78,13 @@ class SettingsScreen extends StatelessWidget {
               itemCount: settingsItems.length,
               itemBuilder: (context, index) {
                 final item = settingsItems[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                  child: ListTile(
-                    tileColor: AppColors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    leading: Icon(item.icon, color: AppColors.primary),
-                    title: Text(
-                      item.title,
-                      style: TextStyle(
-                        color: AppColors.text,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    subtitle: Text(
-                      item.subtitle,
-                      style: TextStyle(color: AppColors.grey),
-                    ),
-                    onTap: () {
-                      // TODO: Add action
-                    },
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  ),
+                return ListTile(
+                  leading: Icon(item.icon, color: Colors.white),
+                  title: Text(item.title, style: TextStyle(color: Colors.white)),
+                  subtitle: Text(item.subtitle, style: TextStyle(color: Colors.white70)),
+                  onTap: () {
+                    // Handle navigation or settings logic here
+                  },
                 );
               },
             ),

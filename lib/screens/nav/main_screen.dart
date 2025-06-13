@@ -19,7 +19,9 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     HomeScreen(),
     SearchScreen(),
-    AddScreen(),
+    AddScreen(onDeckCreated: (deck) {
+      // TODO: handle the created deck, e.g., refresh state or navigate
+    }),
     StatisticScreen(),
     ProfileScreen(),
   ];

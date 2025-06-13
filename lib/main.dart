@@ -18,7 +18,7 @@ void main() async {
 
   // Run the app with ProviderScope for state management
   runApp( ProviderScope(
-      child: BrainBoostApp(), // remove `const` here (Riverpod prefers dynamic instantiation)
+      child: BrainBoostApp(), // Riverpod prefers dynamic instantiation
     ),);
 }
 
@@ -42,7 +42,6 @@ class BrainBoostApp extends ConsumerWidget {
       home: Builder(
         builder: (context) => AnimatedTheme(
           duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
           data: Theme.of(context),
           child: const SplashScreen(),
         ),

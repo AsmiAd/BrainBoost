@@ -1,5 +1,5 @@
 import 'package:brain_boost/screens/profile/edit_page.dart';
-import 'package:brain_boost/screens/profile/settings_page.dart';
+import 'package:brain_boost/screens/setting/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -119,7 +119,7 @@ class ProfileScreen extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const SettingsPage()),
+                        builder: (context) =>  SettingsScreen()),
                   );
                 },
               ),
@@ -163,23 +163,28 @@ class ProfileScreen extends ConsumerWidget {
                 onTap: () => _addAccount(context),
               ),
               const Divider(),
+              // Updated Logout Button with Rounded Rectangle
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: InkWell(
-                  onTap: () => logout(context),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.logout, color: AppColors.error),
-                      const SizedBox(width: 8),
-                      Text(
-                        "Logout",
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.error,
-                          fontWeight: FontWeight.bold,
-                        ),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.logout, color: AppColors.error),
+                    label: Text(
+                      "Logout",
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.error,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
+                    ),
+                    onPressed: () => logout(context),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.error, width: 1.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
                   ),
                 ),
               ),
