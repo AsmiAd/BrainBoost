@@ -5,7 +5,7 @@ import 'package:brain_boost/services/deck_service.dart';
 import 'package:brain_boost/widgets/deck_card.dart';
 
 final decksProvider = FutureProvider.autoDispose<List<Deck>>((ref) {
-  final userId = 'user123'; // Replace with actual user ID
+  final userId = 'user123'; 
   return DeckService().getUserDecks(userId);
 });
 
@@ -38,7 +38,7 @@ class DecksScreen extends ConsumerWidget {
             itemBuilder: (_, index) => DeckCard(
               deck: decks[index],
               onTap: () => _openDeck(context, decks[index].id),
-              color: _getDeckColor(index), // This now works
+              color: _getDeckColor(index), 
             ),
           ),
         ),

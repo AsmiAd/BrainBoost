@@ -9,7 +9,8 @@ import 'package:brain_boost/widgets/deck_card.dart';
 import 'package:brain_boost/widgets/error_retry_widget.dart';
 import 'package:brain_boost/widgets/loading_indicator.dart';
 
-/// Provider to fetch recent decks from Firestore or fallback to Hive.
+import '../../core/providers/user_provider.dart';
+
 final recentDecksProvider = FutureProvider.autoDispose<List<Deck>>((ref) async {
   final userId = ref.watch(authStateProvider).value?.uid;
   if (userId == null) return [];
@@ -34,10 +35,11 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final decksAsync = ref.watch(recentDecksProvider);
-    final firestoreUserAsync = ref.watch(firestoreUserProvider);
+    final usernameAsync = ref.watch(usernameProvider);
+
 
     return Scaffold(
-      appBar: _buildAppBar(context, firestoreUserAsync),
+      appBar: _buildAppBar(context, usernameAsync),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () => ref.refresh(recentDecksProvider.future),
@@ -79,27 +81,25 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context, AsyncValue<Map<String, dynamic>?> firestoreUserAsync) {
-    return AppBar(
-      title: firestoreUserAsync.when(
-        loading: () => const Text('Hi... 👋'),
-        error: (_, __) => const Text('Hi User 👋'),
-        data: (userData) {
-          final name = userData?['name'] ?? 'User';
-          return Text('Hi $name 👋', style: AppTextStyles.headingSmall);
-        },
-      ),
-      actions: [
-        IconButton(
-          icon: Badge(
-            smallSize: 8,
-            child: const Icon(Icons.notifications_none),
-          ),
-          onPressed: () => _showNotifications(context),
+  AppBar _buildAppBar(BuildContext context, AsyncValue<String> usernameAsync) {
+  return AppBar(
+    title: usernameAsync.when(
+      loading: () => const Text('Hi... 👋'),
+      error: (_, __) => const Text('Hi User 👋'),
+      data: (name) => Text('Hi $name 👋', style: AppTextStyles.headingSmall),
+    ),
+    actions: [
+      IconButton(
+        icon: Badge(
+          smallSize: 8,
+          child: const Icon(Icons.notifications_none),
         ),
-      ],
-    );
-  }
+        onPressed: () => _showNotifications(context),
+      ),
+    ],
+  );
+}
+
 
   void _showNotifications(BuildContext context) {
   Navigator.pushNamed(context, '/notifications');

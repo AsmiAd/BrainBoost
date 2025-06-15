@@ -20,7 +20,6 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     SearchScreen(),
     AddScreen(onDeckCreated: (deck) {
-      // TODO: handle the created deck, e.g., refresh state or navigate
     }),
     StatisticScreen(),
     ProfileScreen(),
@@ -39,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Important for curved nav bar transparency
+      extendBody: true, 
       body: _screens[_currentIndex],
       bottomNavigationBar: _buildCurvedNavBar(),
     );
@@ -48,7 +47,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildCurvedNavBar() {
     return Theme(
       data: Theme.of(context).copyWith(
-        canvasColor: Colors.transparent, // Removes white background
+        canvasColor: Colors.transparent, 
       ),
       child: CurvedNavigationBar(
         index: _currentIndex,

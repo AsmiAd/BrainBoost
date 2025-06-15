@@ -18,10 +18,8 @@ class AuthChecker extends StatelessWidget {
         }
 
         if (snapshot.hasData) {
-          // User is logged in
-          return const MainScreen(); // Replace with your actual home screen
+          return const MainScreen(); 
         } else {
-          // User is NOT logged in
           return const LoginScreen();
         }
       },

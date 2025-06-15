@@ -1,4 +1,6 @@
 import 'package:brain_boost/screens/notifications/notification_screen.dart';
+import 'package:brain_boost/screens/profile/feedback_screen.dart';
+import 'package:brain_boost/screens/profile/help_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/auth/auth_checker.dart';
 import '../screens/auth/forgot_password_screen.dart';
@@ -37,6 +39,11 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case '/notifications':
         return MaterialPageRoute(builder: (_) => const NotificationScreen());
+      case '/feedback':
+        return MaterialPageRoute(builder: (_) => const FeedbackScreen());
+      case '/help':
+        return MaterialPageRoute(builder: (_) => const HelpScreen());
+      
       case '/deck-details':
         final deckId = settings.arguments as String;
         return MaterialPageRoute(
