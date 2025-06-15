@@ -1,7 +1,7 @@
 import 'package:brain_boost/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsPage extends StatelessWidget {
   final List<SettingsItem> settingsItems = [
     SettingsItem(
       icon: Icons.settings,

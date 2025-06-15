@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -13,7 +12,6 @@ class SettingsScreen extends StatelessWidget {
       title: 'Reviewing',
       subtitle: 'Scheduling • Automatic display answer',
     ),
-
     SettingsItem(
       icon: Icons.notifications,
       title: 'Notifications',
@@ -24,9 +22,6 @@ class SettingsScreen extends StatelessWidget {
       title: 'Appearance',
       subtitle: 'Themes • Reviewer',
     ),
-   
-  
-  
   ];
 
   @override
@@ -65,8 +60,10 @@ class SettingsScreen extends StatelessWidget {
                 final item = settingsItems[index];
                 return ListTile(
                   leading: Icon(item.icon, color: Colors.white),
-                  title: Text(item.title, style: TextStyle(color: Colors.white)),
-                  subtitle: Text(item.subtitle, style: TextStyle(color: Colors.white70)),
+                  title:
+                      Text(item.title, style: TextStyle(color: Colors.white)),
+                  subtitle: Text(item.subtitle,
+                      style: TextStyle(color: Colors.white70)),
                   onTap: () {
                     // Handle navigation or settings logic here
                   },

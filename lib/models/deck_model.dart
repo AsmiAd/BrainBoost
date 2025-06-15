@@ -23,7 +23,14 @@ class Deck {
     );
   }
 
-  // Convert Deck object to a Map for Hive storage
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'card_count': cardCount,
+      'last_accessed': lastAccessed != null ? Timestamp.fromDate(lastAccessed!) : null,
+    };
+  }
+
   Map<String, dynamic> toHive() {
     return {
       'id': id,
@@ -33,7 +40,6 @@ class Deck {
     };
   }
 
-  // Create Deck from a Hive Map
   factory Deck.fromHive(Map<String, dynamic> map) {
     return Deck(
       id: map['id'] ?? '',
@@ -45,4 +51,3 @@ class Deck {
     );
   }
 }
-

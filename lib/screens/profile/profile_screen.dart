@@ -3,11 +3,13 @@ import 'package:brain_boost/screens/setting/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:share_plus/share_plus.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../core/providers/theme_provider.dart';
 import '../../core/providers/user_provider.dart';
+import 'package:brain_boost/screens/profile/feedback_screen.dart';
+import 'package:brain_boost/screens/profile/help_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -27,8 +29,8 @@ class ProfileScreen extends ConsumerWidget {
     }
   }
 
-  void _addAccount(BuildContext context) {
-    Navigator.of(context).pushNamed('/add-account');
+  void _deleteAccount(BuildContext context) {
+    Navigator.of(context).pushNamed('/delete-account');
   }
 
   @override
@@ -50,9 +52,12 @@ class ProfileScreen extends ConsumerWidget {
             color: AppColors.primary,
           ),
         ],
-        title: Text(
-          "Profile",
-          style: AppTextStyles.headingSmall.copyWith(color: AppColors.primary),
+        title: Center(
+          child: Text(
+            "Profile",
+            style:
+                AppTextStyles.headingSmall.copyWith(color: AppColors.primary),
+          ),
         ),
         iconTheme: const IconThemeData(color: AppColors.primary),
       ),
@@ -61,7 +66,6 @@ class ProfileScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              const Divider(),
               Row(
                 children: [
                   const CircleAvatar(
@@ -72,7 +76,7 @@ class ProfileScreen extends ConsumerWidget {
                   Expanded(
                     child: ref.watch(usernameProvider).when(
                       data: (username) {
-                        debugPrint("Username fetched: $username"); // <-- DEBUG PRINT
+                        debugPrint("Username fetched: $username");
                         return Text(
                           username,
                           style: AppTextStyles.headingSmall
@@ -84,8 +88,7 @@ class ProfileScreen extends ConsumerWidget {
                         return const CircularProgressIndicator();
                       },
                       error: (error, stack) {
-                        debugPrint(
-                            "Error fetching username: $error"); // <-- DEBUG PRINT
+                        debugPrint("Error fetching username: $error");
                         return Text(
                           'User',
                           style: AppTextStyles.headingSmall
@@ -116,8 +119,7 @@ class ProfileScreen extends ConsumerWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) =>  SettingsScreen()),
+                    MaterialPageRoute(builder: (context) => SettingsScreen()),
                   );
                 },
               ),
@@ -125,13 +127,23 @@ class ProfileScreen extends ConsumerWidget {
               ListTile(
                 leading: const Icon(Icons.feedback, color: AppColors.primary),
                 title: Text("Give Feedback", style: AppTextStyles.bodyMedium),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FeedbackScreen()),
+                  );
+                },
               ),
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.help, color: AppColors.primary),
                 title: Text("Help", style: AppTextStyles.bodyMedium),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HelpScreen()),
+                  );
+                },
               ),
               const Divider(),
               ListTile(
@@ -152,13 +164,25 @@ class ProfileScreen extends ConsumerWidget {
               ListTile(
                 leading: const Icon(Icons.share, color: AppColors.primary),
                 title: Text("Share App", style: AppTextStyles.bodyMedium),
-                onTap: () {},
+                onTap: () async {
+                  final result = await Share.shareWithResult(
+                    'Check out BrainBoost! An amazing flashcard app for learning.\nDownload: https://yourapp.link',
+                    subject: 'Try BrainBoost App!',
+                  );
+
+                  if (result.status == ShareResultStatus.success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Thanks for sharing!')),
+                    );
+                  }
+                },
               ),
               const Divider(),
               ListTile(
-                leading: const Icon(Icons.person_add, color: AppColors.primary),
-                title: Text("Add Account", style: AppTextStyles.bodyMedium),
-                onTap: () => _addAccount(context),
+                leading:
+                    const Icon(Icons.person_remove, color: AppColors.primary),
+                title: Text("Delete Account", style: AppTextStyles.bodyMedium),
+                onTap: () => _deleteAccount(context),
               ),
               const Divider(),
               // Updated Logout Button with Rounded Rectangle
@@ -177,7 +201,8 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                     onPressed: () => logout(context),
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppColors.error, width: 1.5),
+                      side:
+                          const BorderSide(color: AppColors.error, width: 1.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),

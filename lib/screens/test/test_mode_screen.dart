@@ -13,19 +13,28 @@ class _TestModeScreenState extends State<TestModeScreen> {
   int _score = 0;
   bool _answered = false;
 
-  // Replace with actual flashcards from your deck
+
   final List<Flashcard> _flashcards = [
-    Flashcard(
-      id: '1',
-      question: 'What is the capital of France?',
-      answer: 'Paris',
-    ),
-    Flashcard(
-      id: '2',
-      question: 'What is 2+2?',
-      answer: '4',
-    ),
-  ];
+  Flashcard(
+    id: '1',
+    question: 'What is the capital of France?',
+    answer: 'Paris',
+    interval: 1,
+    easeFactor: 2.5,
+    lastReviewed: DateTime.now(),
+    nextReview: DateTime.now().add(const Duration(days: 1)),
+  ),
+  Flashcard(
+    id: '2',
+    question: 'What is 2+2?',
+    answer: '4',
+    interval: 1,
+    easeFactor: 2.5,
+    lastReviewed: DateTime.now(),
+    nextReview: DateTime.now().add(const Duration(days: 1)),
+  ),
+];
+
 
   void _handleAnswer(bool isCorrect) {
     setState(() {

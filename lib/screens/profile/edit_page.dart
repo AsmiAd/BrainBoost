@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
@@ -26,25 +29,23 @@ class _EditPageState extends ConsumerState<EditPage> {
   bool _obscureNew = true;
   bool _obscureConfirm = true;
 
-  @override
-  void initState() {
-    super.initState();
-    final user = FirebaseAuth.instance.currentUser;
-    _usernameController = TextEditingController(text: user?.displayName ?? '');
-    _emailController = TextEditingController(text: user?.email ?? '');
-    _currentPasswordController = TextEditingController();
-    _newPasswordController = TextEditingController();
-    _confirmPasswordController = TextEditingController();
+  File? _selectedImage;
+
+  Future<void> _pickImage() async {
+  final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      setState(() {
+        _selectedImage = File(picked.path);
+      });
+    }
   }
 
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _emailController.dispose();
-    _currentPasswordController.dispose();
-    _newPasswordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
+  Future<String?> _uploadProfilePicture(String uid) async {
+    if (_selectedImage == null) return null;
+
+    final ref = FirebaseStorage.instance.ref().child('user_photos/$uid.jpg');
+    await ref.putFile(_selectedImage!);
+    return await ref.getDownloadURL();
   }
 
   Future<void> _updateProfile() async {
@@ -72,8 +73,14 @@ class _EditPageState extends ConsumerState<EditPage> {
         await user.updatePassword(newPassword);
       }
 
+      String? photoUrl = await _uploadProfilePicture(user.uid);
+      if (photoUrl != null) {
+        await user.updatePhotoURL(photoUrl);
+      }
+
       await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
         'username': newUsername,
+        if (photoUrl != null) 'photoUrl': photoUrl,
       }, SetOptions(merge: true));
 
       ref.invalidate(usernameProvider);
@@ -91,6 +98,27 @@ class _EditPageState extends ConsumerState<EditPage> {
         );
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    _usernameController = TextEditingController(text: user?.displayName ?? '');
+    _emailController = TextEditingController(text: user?.email ?? '');
+    _currentPasswordController = TextEditingController();
+    _newPasswordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
   }
 
   Widget buildPasswordField({
@@ -136,6 +164,37 @@ class _EditPageState extends ConsumerState<EditPage> {
           key: _formKey,
           child: Column(
             children: [
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundImage: _selectedImage != null
+                          ? FileImage(_selectedImage!)
+                          : (FirebaseAuth.instance.currentUser?.photoURL != null
+                              ? NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!)
+                              : const AssetImage("assets/images/profile.jpg")) as ImageProvider,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: InkWell(
+                        onTap: _pickImage,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.primary,
+                          ),
+                          child: const Icon(Icons.edit, size: 20, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
               // Username
               TextFormField(
                 controller: _usernameController,

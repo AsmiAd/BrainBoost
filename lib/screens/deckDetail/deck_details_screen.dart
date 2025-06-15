@@ -10,7 +10,6 @@ class DeckDetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // In a real app, you would fetch deck details using deckId
     final deck = Deck(
       id: deckId,
       name: 'Deck Details',
@@ -25,7 +24,6 @@ class DeckDetailsScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              // Navigate to edit screen
             },
           ),
         ],
@@ -36,7 +34,7 @@ class DeckDetailsScreen extends ConsumerWidget {
           children: [
             DeckCard(
               deck: deck,
-              onTap: () {}, // No action needed since we're already in details
+              onTap: () {}, 
             ),
             const SizedBox(height: 24),
             Row(
@@ -69,7 +67,6 @@ class DeckDetailsScreen extends ConsumerWidget {
               'Flashcards',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            // List of flashcards would go here
           ],
         ),
       ),
