@@ -1,33 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:brain_boost/core/constants/app_text_styles.dart';
-import 'package:brain_boost/core/providers/auth_provider.dart';
 import 'package:brain_boost/models/deck_model.dart';
-import 'package:brain_boost/services/deck_service.dart';
-import 'package:brain_boost/services/local_storage_service.dart';
 import 'package:brain_boost/widgets/deck_card.dart';
 import 'package:brain_boost/widgets/error_retry_widget.dart';
 import 'package:brain_boost/widgets/loading_indicator.dart';
 
+import '../../core/providers/deck_repository.dart';
 import '../../core/providers/user_provider.dart';
 
+// Usage example in your HomeScreen or any widget
+
 final recentDecksProvider = FutureProvider.autoDispose<List<Deck>>((ref) async {
-  final userId = ref.watch(authStateProvider).value?.uid;
-  if (userId == null) return [];
-
-  final deckService = DeckService();
-  final localStorage = LocalStorageService();
-
-  try {
-    final remoteDecks = await deckService.getRecentDecks(userId);
-    await localStorage.cacheRecentDecks(remoteDecks);
-    return remoteDecks;
-  } catch (e) {
-    final cached = await localStorage.getCachedDecks();
-    if (cached != null) return cached;
-    rethrow;
-  }
+  final repo = ref.watch(deckRepositoryProvider);
+  await repo.sync();                 // Fetch latest decks from API and update cache
+  return repo.getAllDecks();         // Return cached decks immediately after sync
 });
+
+
+
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});

@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 part 'study_progress.g.dart';
 
 @HiveType(typeId: 0)
-class StudyProgress {
+class StudyProgress extends HiveObject {
   @HiveField(0)
   final String timePeriod;
 
@@ -12,6 +12,8 @@ class StudyProgress {
 
   @HiveField(2)
   final int goalMinutes;
+
+  String get id => timePeriod;
 
   StudyProgress({
     required this.timePeriod,
@@ -34,4 +36,9 @@ class StudyProgress {
       'goalMinutes': goalMinutes,
     };
   }
+
+  // JSON helpers for ApiService
+  factory StudyProgress.fromJson(Map<String, dynamic> json) => StudyProgress.fromMap(json);
+
+  Map<String, dynamic> toJson() => toMap();
 }

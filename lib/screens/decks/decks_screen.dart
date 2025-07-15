@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:brain_boost/models/deck_model.dart';
-import 'package:brain_boost/services/deck_service.dart';
 import 'package:brain_boost/widgets/deck_card.dart';
 
+import '../../core/providers/deck_service_provider.dart';
+
 final decksProvider = FutureProvider.autoDispose<List<Deck>>((ref) {
-  final userId = 'user123'; 
-  return DeckService().getUserDecks(userId);
+  final userId = 'user123'; // replace with real user ID from auth provider
+  final deckService = ref.watch(deckServiceProvider);
+  return deckService.getUserDecks(userId);
 });
 
 class DecksScreen extends ConsumerWidget {
