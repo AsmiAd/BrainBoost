@@ -1,7 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:brain_boost/services/notification_service.dart';
+import '../../services/notification_service.dart';
 
-final notificationProvider = FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+final notificationServiceProvider = Provider<NotificationService>((ref) {
   final service = NotificationService();
-  return await service.fetchNotifications();
+  service.init(); // Initialize Hive box
+  return service;
+});
+
+final notificationProvider = StreamProvider.autoDispose<int>((ref) {
+  final service = ref.watch(notificationServiceProvider);
+  return service.unreadCountStream();
 });

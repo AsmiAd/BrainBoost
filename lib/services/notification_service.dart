@@ -1,52 +1,43 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+import 'package:hive/hive.dart';
 
 class NotificationService {
-  final _firestore = FirebaseFirestore.instance;
-  final _auth = FirebaseAuth.instance;
+  static const _boxName = 'notifications';
+  late Box<Map> _box;
 
-  String? get _userId => _auth.currentUser?.uid;
-
-  Future<List<Map<String, dynamic>>> fetchNotifications() async {
-    if (_userId == null) return [];
-
-    final snapshot = await _firestore
-        .collection('notifications')
-        .doc(_userId)
-        .collection('user_notifications')
-        .orderBy('timestamp', descending: true)
-        .get();
-
-    return snapshot.docs.map((doc) => doc.data()).toList();
+  Future<void> init() async {
+    _box = await Hive.openBox<Map>(_boxName);
   }
 
-  Future<void> markAllAsRead() async {
-    if (_userId == null) return;
-
-    final snapshot = await _firestore
-        .collection('notifications')
-        .doc(_userId)
-        .collection('user_notifications')
-        .where('read', isEqualTo: false)
-        .get();
-
-    for (var doc in snapshot.docs) {
-      await doc.reference.update({'read': true});
+  // Stream that emits the number of unread notifications every 3 seconds
+  Stream<int> unreadCountStream() async* {
+    while (true) {
+      final unreadCount = _box.values.where((notif) => notif['read'] == false).length;
+      yield unreadCount;
+      await Future.delayed(Duration(seconds: 3));
     }
   }
 
   Future<void> addNotification(String title, String message) async {
-    if (_userId == null) return;
-
-    await _firestore
-        .collection('notifications')
-        .doc(_userId)
-        .collection('user_notifications')
-        .add({
+    final id = DateTime.now().millisecondsSinceEpoch.toString();
+    await _box.put(id, {
       'title': title,
       'message': message,
-      'timestamp': Timestamp.now(),
       'read': false,
+      'timestamp': DateTime.now().toIso8601String(),
     });
+  }
+
+  Future<void> markAllRead() async {
+    for (final key in _box.keys) {
+      final notif = _box.get(key);
+      if (notif != null && notif['read'] == false) {
+        await _box.put(key, {...notif, 'read': true});
+      }
+    }
+  }
+
+  List<Map> getAllNotifications() {
+    return _box.values.toList();
   }
 }

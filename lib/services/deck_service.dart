@@ -1,49 +1,29 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/flashcard_model.dart';
-import '../models/deck_model.dart';
+import 'package:brain_boost/models/deck_model.dart';
+import 'package:brain_boost/models/flashcard_model.dart';  // Add this
+import 'package:brain_boost/services/api_service.dart';
+import 'package:brain_boost/services/deck_local_service.dart';
 
 class DeckService {
-  final _firestore = FirebaseFirestore.instance;
+  final ApiService _api;
+  final DeckLocalService _local;
 
-  Future<List<Flashcard>> getFlashcards(String deckId) async {
-    final snap = await _firestore
-        .collection('decks')
-        .doc(deckId)
-        .collection('flashcards')
-        .get();
-
-    return snap.docs.map((doc) => Flashcard.fromMap(doc.id, doc.data())).toList();
-  }
-
-  Future<List<Deck>> getRecentDecks(String userId) async {
-    final snapshot = await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('decks')
-        .orderBy('last_accessed', descending: true)
-        .limit(10)
-        .get();
-
-    return snapshot.docs.map((doc) => Deck.fromFirestore(doc)).toList();
-  }
+  DeckService(this._api, this._local);
 
   Future<List<Deck>> getUserDecks(String userId) async {
-    final snapshot = await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('decks')
-        .orderBy('last_accessed', descending: true)
-        .get();
+    if (!_local.isEmpty) {
+      return _local.getAll();
+    }
+    final decks = await _api.fetchDecks(onlyPublic: false);
+    await _local.saveMany(decks);
+    return decks;
+  }
 
-    return snapshot.docs.map((doc) => Deck.fromFirestore(doc)).toList();
+  Future<List<Flashcard>> getFlashcards(String deckId) async {
+    return _api.fetchCards(deckId);
   }
 
   Future<void> updateFlashcard(String deckId, Flashcard card) async {
-    await _firestore
-        .collection('decks')
-        .doc(deckId)
-        .collection('flashcards')
-        .doc(card.id)
-        .update(card.toMap());
+    // Call ApiService method to update flashcard
+    await _api.updateFlashcard(deckId, card);
   }
 }

@@ -26,8 +26,16 @@ class Flashcard {
       answer: map['answer'] ?? '',
       interval: map['interval'] ?? 1,
       easeFactor: (map['easeFactor'] ?? 2.5).toDouble(),
-      lastReviewed: map['lastReviewed']?.toDate(),
-      nextReview: map['nextReview']?.toDate(),
+      lastReviewed: map['lastReviewed'] != null
+          ? (map['lastReviewed'] is Timestamp
+              ? (map['lastReviewed'] as Timestamp).toDate()
+              : DateTime.tryParse(map['lastReviewed'].toString()))
+          : null,
+      nextReview: map['nextReview'] != null
+          ? (map['nextReview'] is Timestamp
+              ? (map['nextReview'] as Timestamp).toDate()
+              : DateTime.tryParse(map['nextReview'].toString()))
+          : null,
     );
   }
 
@@ -57,5 +65,20 @@ class Flashcard {
       lastReviewed: lastReviewed ?? this.lastReviewed,
       nextReview: nextReview ?? this.nextReview,
     );
+  }
+
+  // JSON helpers for ApiService
+  factory Flashcard.fromJson(Map<String, dynamic> json) {
+    // Here json must include 'id'
+    return Flashcard.fromMap(
+      json['id'] ?? '',
+      json,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final map = toMap();
+    map['id'] = id;
+    return map;
   }
 }
