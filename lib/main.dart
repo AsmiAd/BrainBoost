@@ -7,8 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app_routes.dart';
 import 'firebase_options.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+// Hive models
 import 'models/deck_model.dart';
-import 'models/study_progress.dart'; 
+import 'models/flashcard_model.dart';
+import 'models/study_progress.dart';
 
 void main() async {
   // Ensure Flutter binding is initialized
@@ -22,21 +25,28 @@ void main() async {
   // Initialize Hive
   await Hive.initFlutter();
 
-  // Register Hive adapters
-  Hive.registerAdapter(DeckAdapter());
-  // Register other adapters like FlashcardAdapter, StudyProgressAdapter, etc.
+  // ✅ Register Hive adapters only if not already registered
+  if (!Hive.isAdapterRegistered(1)) {
+    Hive.registerAdapter(DeckAdapter());
+  }
+  if (!Hive.isAdapterRegistered(2)) {
+    Hive.registerAdapter(StudyProgressAdapter());
+  }
+  if (!Hive.isAdapterRegistered(3)) {
+    Hive.registerAdapter(FlashcardAdapter());
+  }
 
-  // Open boxes
+  // ✅ Open Hive boxes
   await Hive.openBox<Deck>('decks');
-  
-  Hive.registerAdapter(StudyProgressAdapter());
-await Hive.openBox<StudyProgress>('progress');
+  await Hive.openBox<StudyProgress>('progress');
+  await Hive.openBox<Flashcard>('flashcards');
 
-
-  // Run the app with ProviderScope for state management
-  runApp( ProviderScope(
-      child: BrainBoostApp(), // Riverpod prefers dynamic instantiation
-    ),);
+  // ✅ Run the app with ProviderScope for Riverpod
+  runApp(
+    const ProviderScope(
+      child: BrainBoostApp(),
+    ),
+  );
 }
 
 class BrainBoostApp extends ConsumerWidget {
@@ -54,8 +64,6 @@ class BrainBoostApp extends ConsumerWidget {
       themeMode: themeMode,
       onGenerateRoute: AppRoutes.generateRoute,
       initialRoute: '/',
-
-      // Initial screen with smooth theme transition
       home: Builder(
         builder: (context) => AnimatedTheme(
           duration: const Duration(milliseconds: 300),

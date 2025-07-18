@@ -1,4 +1,3 @@
-// lib/services/api_service.dart
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
@@ -14,57 +13,10 @@ class ApiService {
 
   final FirebaseAuth _auth;
 
-  static const _baseUrl =
-      String.fromEnvironment('API_URL', defaultValue: 'http://localhost:8080');
+  static const String _baseUrl = 'http://192.168.1.172:8080'; // make sure this is correct
 
   Future<String> _token() async =>
       (await _auth.currentUser?.getIdToken()) ?? '';
-
-  Future<List<Deck>> fetchDecks({bool onlyPublic = false}) async {
-    final res = await _get('/api/decks${onlyPublic ? '?public=true' : ''}');
-    return (jsonDecode(res.body) as List)
-        .map((j) => Deck.fromJson(j))
-        .toList();
-  }
-
-  Future<Deck> createDeck(Deck deck) async {
-    final res = await _post(
-      '/api/decks',
-      body: jsonEncode(deck.toJson()),
-      expected: 201,
-    );
-    return Deck.fromJson(jsonDecode(res.body));
-  }
-
-  Future<List<StudyProgress>> fetchProgress() async {
-    final res = await _get('/api/progress');
-    return (jsonDecode(res.body) as List)
-        .map((j) => StudyProgress.fromJson(j))
-        .toList();
-  }
-
-  Future<void> updateProgress(StudyProgress p) async {
-    await _post(
-      '/api/progress',
-      body: jsonEncode(p.toJson()),
-      expected: 201,
-    );
-  }
-
-  Future<List<Flashcard>> fetchCards(String deckId) async {
-    final res = await _get('/api/cards/$deckId');
-    return (jsonDecode(res.body) as List)
-        .map((j) => Flashcard.fromJson(j))
-        .toList();
-  }
-
-  Future<void> createCard(Flashcard card) async {
-    await _post(
-      '/api/cards',
-      body: jsonEncode(card.toJson()),
-      expected: 201,
-    );
-  }
 
   Future<http.Response> _get(String path) async => http.get(
         Uri.parse('$_baseUrl$path'),
@@ -92,13 +44,52 @@ class ApiService {
         'Content-Type': 'application/json',
       };
 
-      Future<void> updateFlashcard(String deckId, Flashcard card) async {
-    // Example Firestore update logic:
+  Future<List<Deck>> fetchDecks({bool onlyPublic = false}) async {
+    final res = await _get('/api/decks${onlyPublic ? '?public=true' : ''}');
+    return (jsonDecode(res.body) as List)
+        .map((j) => Deck.fromJson(j))
+        .toList();
+  }
+
+  Future<Deck> createDeck(Deck deck) async {
+    final res = await _post(
+      '/api/decks',
+      body: jsonEncode(deck.toJson()),
+      expected: 201,
+    );
+    return Deck.fromJson(jsonDecode(res.body));
+  }
+
+  Future<void> saveManyCards(String deckId, List<Flashcard> cards) async {
+    // ✅ Match the backend route! (This is the correct one unless you changed it)
+    final res = await _post(
+      '/api/cards/$deckId/many',
+      body: jsonEncode(cards.map((c) => c.toJson()).toList()),
+      expected: 200,
+    );
+  }
+
+  Future<List<Flashcard>> fetchCards(String deckId) async {
+    final res = await _get('/api/cards/$deckId');
+    return (jsonDecode(res.body) as List)
+        .map((j) => Flashcard.fromJson(j))
+        .toList();
+  }
+
+  Future<void> createCard(Flashcard card) async {
+    await _post(
+      '/api/cards',
+      body: jsonEncode(card.toJson()),
+      expected: 201,
+    );
+  }
+
+  Future<void> updateFlashcard(String deckId, Flashcard card) async {
     final docRef = FirebaseFirestore.instance
-      .collection('decks')
-      .doc(deckId)
-      .collection('flashcards')
-      .doc(card.id);
+        .collection('decks')
+        .doc(deckId)
+        .collection('flashcards')
+        .doc(card.id);
 
     await docRef.update({
       'question': card.question,
@@ -106,8 +97,22 @@ class ApiService {
       'interval': card.interval,
       'lastReviewed': card.lastReviewed?.toIso8601String(),
       'nextReview': card.nextReview?.toIso8601String(),
-      // add other fields as necessary
     });
+  }
+
+  Future<List<StudyProgress>> fetchProgress() async {
+    final res = await _get('/api/progress');
+    return (jsonDecode(res.body) as List)
+        .map((j) => StudyProgress.fromJson(j))
+        .toList();
+  }
+
+  Future<void> updateProgress(StudyProgress p) async {
+    await _post(
+      '/api/progress',
+      body: jsonEncode(p.toJson()),
+      expected: 201,
+    );
   }
 }
 

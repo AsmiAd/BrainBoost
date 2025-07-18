@@ -19,6 +19,7 @@ class _TestModeScreenState extends State<TestModeScreen> {
     id: '1',
     question: 'What is the capital of France?',
     answer: 'Paris',
+    deckId: 'testDeck1', // ✅ hardcoded deckId
     interval: 1,
     easeFactor: 2.5,
     lastReviewed: DateTime.now(),
@@ -28,6 +29,7 @@ class _TestModeScreenState extends State<TestModeScreen> {
     id: '2',
     question: 'What is 2+2?',
     answer: '4',
+    deckId: 'testDeck1', // ✅ same here
     interval: 1,
     easeFactor: 2.5,
     lastReviewed: DateTime.now(),

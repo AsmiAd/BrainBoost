@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:brain_boost/core/constants/app_text_styles.dart';
@@ -6,13 +7,13 @@ import 'package:brain_boost/widgets/deck_card.dart';
 import 'package:brain_boost/widgets/error_retry_widget.dart';
 import 'package:brain_boost/widgets/loading_indicator.dart';
 
-import '../../core/providers/deck_repository.dart';
+import '../../core/providers/deck_provider.dart';
 import '../../core/providers/user_provider.dart';
 
 // Usage example in your HomeScreen or any widget
 
 final recentDecksProvider = FutureProvider.autoDispose<List<Deck>>((ref) async {
-  final repo = ref.watch(deckRepositoryProvider);
+  final repo = ref.watch(deckServiceProvider);
   await repo.sync();                 // Fetch latest decks from API and update cache
   return repo.getAllDecks();         // Return cached decks immediately after sync
 });
@@ -86,6 +87,25 @@ class HomeScreen extends ConsumerWidget {
           child: const Icon(Icons.notifications_none),
         ),
         onPressed: () => _showNotifications(context),
+      ),
+      IconButton(
+        icon: const Icon(Icons.vpn_key),
+        tooltip: 'Print Firebase ID Token',
+        onPressed: () async {
+          final user = FirebaseAuth.instance.currentUser;
+          if (user != null) {
+            final token = await user.getIdToken();
+            print('Firebase ID Token:\n$token');
+            // Optional: show a SnackBar to notify user
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('ID token printed to console')),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('No user logged in')),
+            );
+          }
+        },
       ),
     ],
   );

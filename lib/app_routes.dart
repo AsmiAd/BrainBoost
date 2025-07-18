@@ -10,9 +10,13 @@ import '../screens/deckDetail/deck_details_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/nav/main_screen.dart';
 import '../screens/search/search_screen.dart';
-import '../screens/study/study_mode_screen.dart';
 import '../screens/test/test_mode_screen.dart';
+import 'models/flashcard_model.dart';
 import 'screens/decks/decks_screen.dart';
+import 'screens/flashcard/flashcards_screen.dart';
+import 'screens/study/flash_mode_screen.dart';
+import 'screens/study/spaced_repetition_screen.dart';
+import 'screens/study/study_screen.dart';
 
 class AppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -22,7 +26,7 @@ class AppRoutes {
       case '/search':
         return MaterialPageRoute(builder: (_) => const SearchScreen());
       case '/study':
-        return MaterialPageRoute(builder: (_) => const StudyModeScreen());
+        return MaterialPageRoute(builder: (_) => const StudyScreen());
       case '/test':
         return MaterialPageRoute(builder: (_) => const TestModeScreen());
       case '/main_screen':
@@ -43,7 +47,28 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const FeedbackScreen());
       case '/help':
         return MaterialPageRoute(builder: (_) => const HelpScreen());
-      
+      case '/flash_mode': {
+  final args = settings.arguments as Map<String, dynamic>;
+  final deckTitle = args['deckTitle'] as String;
+  final cards = args['cards'] as List<Flashcard>;
+  return MaterialPageRoute(
+    builder: (_) => FlashModeScreen(deckTitle: deckTitle, cards: cards),
+  );
+}
+
+case '/spaced_repetition': {
+  final deckId = settings.arguments as String;
+  return MaterialPageRoute(
+    builder: (_) => SpacedRepetitionScreen(deckId: deckId),
+  );
+}
+
+      case '/flashcards':
+        final deckId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => FlashcardsScreen(deckId: deckId),
+        );
+
       case '/deck-details':
         final deckId = settings.arguments as String;
         return MaterialPageRoute(

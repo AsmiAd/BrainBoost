@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:brain_boost/models/deck_model.dart';
 import 'package:brain_boost/widgets/deck_card.dart';
 
-import '../../core/providers/deck_service_provider.dart';
+import '../../core/providers/deck_provider.dart';
+
 
 final decksProvider = FutureProvider.autoDispose<List<Deck>>((ref) {
   final userId = 'user123'; // replace with real user ID from auth provider
@@ -33,16 +34,22 @@ class DecksScreen extends ConsumerWidget {
         child: decksAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (err, _) => Center(child: Text('Error: $err')),
-          data: (decks) => ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: decks.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (_, index) => DeckCard(
-              deck: decks[index],
-              onTap: () => _openDeck(context, decks[index].id),
-              color: _getDeckColor(index), 
-            ),
-          ),
+          data: (decks) {
+            if (decks.isEmpty) {
+              return const Center(child: Text('No decks found.'));
+            }
+
+            return ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: decks.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (_, index) => DeckCard(
+                deck: decks[index],
+                onTap: () => _openDeck(context, decks[index].id),
+                color: _getDeckColor(index),
+              ),
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -53,20 +60,15 @@ class DecksScreen extends ConsumerWidget {
   }
 
   Color _getDeckColor(int index) {
-    final colors = [
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-    ];
+    final colors = [Colors.blue, Colors.green, Colors.orange, Colors.purple];
     return colors[index % colors.length];
   }
 
   void _openDeck(BuildContext context, String deckId) {
-    Navigator.pushNamed(
-      context,
-      '/deck-details',
-      arguments: deckId,
-    );
-  }
+  Navigator.pushNamed(
+    context,
+    '/flashcards', // ← not '/deck-details' if you want flashcards
+    arguments: deckId,
+  );
+}
 }
