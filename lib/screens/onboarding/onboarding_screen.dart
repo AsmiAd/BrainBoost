@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart'; 
-import '../auth/login_screen.dart'; 
+import '../../core/constants/app_colors.dart';
+import '../auth/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -49,10 +49,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               controller: _controller,
               onPageChanged: (index) => setState(() => _currentPage = index),
               itemCount: onboardingData.length,
-              itemBuilder: (context, index) => OnboardingContent(
+              itemBuilder: (context, index) => AnimatedOnboardingContent(
                 title: onboardingData[index]['title']!,
                 description: onboardingData[index]['description']!,
                 image: onboardingData[index]['image']!,
+                isVisible: _currentPage == index,
               ),
             ),
           ),
@@ -115,17 +116,71 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 }
 
-class OnboardingContent extends StatelessWidget {
+class AnimatedOnboardingContent extends StatefulWidget {
   final String title;
   final String description;
   final String image;
+  final bool isVisible;
 
-  const OnboardingContent({
+  const AnimatedOnboardingContent({
     super.key,
     required this.title,
     required this.description,
     required this.image,
+    required this.isVisible,
   });
+
+  @override
+  State<AnimatedOnboardingContent> createState() =>
+      _AnimatedOnboardingContentState();
+}
+
+class _AnimatedOnboardingContentState extends State<AnimatedOnboardingContent>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<Offset> _imageSlide;
+  late final Animation<Offset> _textSlide;
+  late final Animation<double> _fade;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _imageSlide = Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    _textSlide = Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    _fade = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+    );
+
+    if (widget.isVisible) {
+      _controller.forward();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant AnimatedOnboardingContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isVisible && !_controller.isCompleted) {
+      _controller.forward();
+    } else if (!widget.isVisible && _controller.isCompleted) {
+      _controller.reset();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,23 +189,39 @@ class OnboardingContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(image, height: 250),
-          const SizedBox(height: 40),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: AppColors.text,
-                  fontWeight: FontWeight.w700,
-                ),
-            textAlign: TextAlign.center,
+          SlideTransition(
+            position: _imageSlide,
+            child: FadeTransition(
+              opacity: _fade,
+              child: Image.asset(widget.image, height: 250),
+            ),
           ),
-          const SizedBox(height: 16),
-          Text(
-            description,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.text.withOpacity(0.7),
-                ),
-            textAlign: TextAlign.center,
+          const SizedBox(height: 40),
+          SlideTransition(
+            position: _textSlide,
+            child: FadeTransition(
+              opacity: _fade,
+              child: Column(
+                children: [
+                  Text(
+                    widget.title,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: AppColors.text,
+                          fontWeight: FontWeight.w700,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    widget.description,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.text.withOpacity(0.7),
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

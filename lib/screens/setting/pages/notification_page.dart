@@ -1,3 +1,4 @@
+import 'package:brain_boost/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class NotificationsSettingsPage extends StatefulWidget {
@@ -29,7 +30,7 @@ class _NotificationsSettingsPageState extends State<NotificationsSettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Notification Settings"),
-        backgroundColor: Colors.blueAccent,
+      backgroundColor: AppColors.primary,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
