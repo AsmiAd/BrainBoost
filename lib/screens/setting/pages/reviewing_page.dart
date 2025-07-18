@@ -1,3 +1,4 @@
+import 'package:brain_boost/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ReviewingSettingsPage extends StatefulWidget {
@@ -16,7 +17,7 @@ class _ReviewingSettingsPageState extends State<ReviewingSettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Reviewing Settings"),
-        backgroundColor: Colors.blueAccent,
+      backgroundColor: AppColors.primary,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

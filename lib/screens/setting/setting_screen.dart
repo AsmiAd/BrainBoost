@@ -1,3 +1,4 @@
+import 'package:brain_boost/core/constants/app_colors.dart';
 import 'package:brain_boost/screens/setting/pages/apperance_page.dart';
 import 'package:brain_boost/screens/setting/pages/general_page.dart';
 import 'package:brain_boost/screens/setting/pages/notification_page.dart';
@@ -56,7 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Colors.blueAccent,
+      backgroundColor: AppColors.primary,
         title: const Text('Settings', style: TextStyle(color: Colors.white)),
         leading: const BackButton(color: Colors.white),
         elevation: 0,
