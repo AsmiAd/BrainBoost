@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app_routes.dart';
 import 'firebase_options.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'models/deck_model.dart';
+import 'models/study_progress.dart'; 
 
 void main() async {
   // Ensure Flutter binding is initialized
@@ -15,6 +18,20 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Initialize Hive
+  await Hive.initFlutter();
+
+  // Register Hive adapters
+  Hive.registerAdapter(DeckAdapter());
+  // Register other adapters like FlashcardAdapter, StudyProgressAdapter, etc.
+
+  // Open boxes
+  await Hive.openBox<Deck>('decks');
+  
+  Hive.registerAdapter(StudyProgressAdapter());
+await Hive.openBox<StudyProgress>('progress');
+
 
   // Run the app with ProviderScope for state management
   runApp( ProviderScope(

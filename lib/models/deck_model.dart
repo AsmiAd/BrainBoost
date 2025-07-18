@@ -1,9 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive/hive.dart';
 
+part 'deck_model.g.dart';
+
+@HiveType(typeId: 1)
 class Deck {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   final String name;
+
+  @HiveField(2)
   final int cardCount;
+
+  @HiveField(3)
   final DateTime? lastAccessed;
 
   Deck({
@@ -13,6 +24,7 @@ class Deck {
     required this.lastAccessed,
   });
 
+  // Firestore mapping
   factory Deck.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return Deck(
@@ -31,15 +43,7 @@ class Deck {
     };
   }
 
-  Map<String, dynamic> toHive() {
-    return {
-      'id': id,
-      'name': name,
-      'cardCount': cardCount,
-      'lastAccessed': lastAccessed?.millisecondsSinceEpoch,
-    };
-  }
-
+  // Hive mapping
   factory Deck.fromHive(Map<String, dynamic> map) {
     return Deck(
       id: map['id'] ?? '',
@@ -49,5 +53,26 @@ class Deck {
           ? DateTime.fromMillisecondsSinceEpoch(map['lastAccessed'])
           : null,
     );
+  }
+
+  // JSON (for API communication)
+  factory Deck.fromJson(Map<String, dynamic> json) {
+    return Deck(
+      id: json['id'] ?? '',
+      name: json['name'] ?? 'Untitled',
+      cardCount: json['cardCount'] ?? 0,
+      lastAccessed: json['lastAccessed'] != null
+          ? DateTime.parse(json['lastAccessed'])
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'cardCount': cardCount,
+      'lastAccessed': lastAccessed?.toIso8601String(),
+    };
   }
 }

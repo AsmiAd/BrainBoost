@@ -1,6 +1,16 @@
+import 'package:brain_boost/screens/setting/pages/apperance_page.dart';
+import 'package:brain_boost/screens/setting/pages/general_page.dart';
+import 'package:brain_boost/screens/setting/pages/notification_page.dart';
+import 'package:brain_boost/screens/setting/pages/reviewing_page.dart';
 import 'package:flutter/material.dart';
 
-class SettingsScreen extends StatelessWidget {
+
+class SettingsScreen extends StatefulWidget {
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
   final List<SettingsItem> settingsItems = [
     SettingsItem(
       icon: Icons.settings,
@@ -24,14 +34,31 @@ class SettingsScreen extends StatelessWidget {
     ),
   ];
 
+  void navigateToSettings(int index) {
+    switch (index) {
+      case 0:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => GeneralSettingsPage()));
+        break;
+      case 1:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => ReviewingSettingsPage()));
+        break;
+      case 2:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => NotificationsSettingsPage()));
+        break;
+      case 3:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => AppearanceSettingsPage()));
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text('Settings', style: TextStyle(color: Colors.white)),
-        leading: BackButton(color: Colors.white),
+        backgroundColor: Colors.blueAccent,
+        title: const Text('Settings', style: TextStyle(color: Colors.white)),
+        leading: const BackButton(color: Colors.white),
         elevation: 0,
       ),
       body: Column(
@@ -39,18 +66,19 @@ class SettingsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
             child: TextField(
-              style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Search...',
-                hintStyle: TextStyle(color: Colors.white70),
+                hintStyle: const TextStyle(color: Colors.white70),
                 filled: true,
-                fillColor: Colors.grey[900],
-                prefixIcon: Icon(Icons.search, color: Colors.white70),
+                fillColor: Colors.blueAccent,
+                prefixIcon: const Icon(Icons.search, color: Colors.white70),
+                contentPadding: const EdgeInsets.symmetric(vertical: 0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide.none,
                 ),
               ),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
           Expanded(
@@ -58,15 +86,19 @@ class SettingsScreen extends StatelessWidget {
               itemCount: settingsItems.length,
               itemBuilder: (context, index) {
                 final item = settingsItems[index];
-                return ListTile(
-                  leading: Icon(item.icon, color: Colors.white),
-                  title:
-                      Text(item.title, style: TextStyle(color: Colors.white)),
-                  subtitle: Text(item.subtitle,
-                      style: TextStyle(color: Colors.white70)),
-                  onTap: () {
-                    // Handle navigation or settings logic here
-                  },
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4),
+                  child: Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: ListTile(
+                      leading: Icon(item.icon, color: Colors.blueAccent),
+                      title: Text(item.title, style: const TextStyle(color: Colors.black)),
+                      subtitle: Text(item.subtitle, style: const TextStyle(color: Colors.black54)),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                      onTap: () => navigateToSettings(index),
+                    ),
+                  ),
                 );
               },
             ),

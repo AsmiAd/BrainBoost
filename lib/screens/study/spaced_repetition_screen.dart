@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/providers/deck_service_provider.dart';
 import '../../models/flashcard_model.dart';
 import '../../services/deck_service.dart';
+import '../../models/flashcard_model.dart'; // Add this import
+
 
 class SpacedRepetitionScreen extends ConsumerStatefulWidget {
   final String deckId;
@@ -24,10 +27,14 @@ class _SpacedRepetitionScreenState extends ConsumerState<SpacedRepetitionScreen>
   }
 
   Future<void> loadDueCards() async {
-    final allCards = await DeckService().getFlashcards(widget.deckId);
+    final deckService = ref.read(deckServiceProvider);
+final allCards = await deckService.getFlashcards(widget.deckId);
+
     final now = DateTime.now();
     dueCards = allCards.where((card) =>
-        card.nextReview == null || card.nextReview!.isBefore(now)).toList();
+  card.nextReview == null || (card.nextReview?.isBefore(now) ?? false)
+).toList();
+
 
     setState(() {
       loading = false;
@@ -35,29 +42,31 @@ class _SpacedRepetitionScreenState extends ConsumerState<SpacedRepetitionScreen>
   }
 
   void updateCard(String difficulty) async {
-    final card = dueCards[currentIndex];
-    int newInterval;
+  final deckService = ref.read(deckServiceProvider);
+  final card = dueCards[currentIndex];
+  int newInterval;
 
-    switch (difficulty) {
-      case 'Easy': newInterval = 4; break;
-      case 'Medium': newInterval = 2; break;
-      case 'Hard': newInterval = 1; break;
-      default: newInterval = 1;
-    }
-
-    final updatedCard = card.copyWith(
-      interval: newInterval,
-      lastReviewed: DateTime.now(),
-      nextReview: DateTime.now().add(Duration(days: newInterval)),
-    );
-
-    await DeckService().updateFlashcard(widget.deckId, updatedCard);
-
-    setState(() {
-      currentIndex++;
-      showAnswer = false;
-    });
+  switch (difficulty) {
+    case 'Easy': newInterval = 4; break;
+    case 'Medium': newInterval = 2; break;
+    case 'Hard': newInterval = 1; break;
+    default: newInterval = 1;
   }
+
+  final updatedCard = card.copyWith(
+    interval: newInterval,
+    lastReviewed: DateTime.now(),
+    nextReview: DateTime.now().add(Duration(days: newInterval)),
+  );
+
+  await deckService.updateFlashcard(widget.deckId, updatedCard);
+
+  setState(() {
+    currentIndex++;
+    showAnswer = false;
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
