@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'add_flashcards_screen.dart';
+
 class AddScreen extends StatefulWidget {
   final Function(Map<String, dynamic>) onDeckCreated;
 
@@ -78,8 +80,15 @@ class _AddScreenState extends State<AddScreen> {
     await Future.delayed(const Duration(seconds: 1));
 
     widget.onDeckCreated(newDeck);
-    if (!mounted) return;
-    Navigator.pop(context);
+if (!mounted) return;
+
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (_) => AddFlashcardsScreen(deck: newDeck),
+  ),
+);
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Deck created successfully!')),
     );

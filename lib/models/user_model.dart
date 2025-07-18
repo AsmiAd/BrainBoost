@@ -1,5 +1,3 @@
-// lib/models/user_model.dart
-
 class AppUser {
   final String uid;
   final String email;
