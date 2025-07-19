@@ -37,7 +37,6 @@ class StudyProgress extends HiveObject {
     };
   }
 
-  // JSON helpers for ApiService
   factory StudyProgress.fromJson(Map<String, dynamic> json) => StudyProgress.fromMap(json);
 
   Map<String, dynamic> toJson() => toMap();

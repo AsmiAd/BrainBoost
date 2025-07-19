@@ -29,11 +29,15 @@ class Flashcard extends HiveObject {
   @HiveField(7)
   final String deckId; // ✅ NEW FIELD
 
+  @HiveField(8)
+  final String? imagePath;
+
   Flashcard({
     required this.id,
     required this.question,
     required this.answer,
-    required this.deckId, // ✅ REQUIRED NOW
+    required this.deckId, 
+    this.imagePath,
     this.interval = 1,
     this.easeFactor = 2.5,
     this.lastReviewed,
@@ -46,9 +50,10 @@ class Flashcard extends HiveObject {
       id: id,
       question: map['question'] ?? '',
       answer: map['answer'] ?? '',
-      deckId: map['deckId'] ?? '', // ✅ Read deckId
+      deckId: map['deckId'] ?? '',
+      imagePath: map['imagePath'],
       interval: (map['interval'] ?? 1).clamp(1, 9999),
-      easeFactor: ((map['easeFactor'] ?? 2.5) as num).toDouble().clamp(1.3, 3.0),
+      easeFactor: ((map['easeFactor'] ?? 2.5) as num).toDouble(),
       lastReviewed: map['lastReviewed'] != null
           ? (map['lastReviewed'] is Timestamp
               ? (map['lastReviewed'] as Timestamp).toDate()
@@ -62,32 +67,29 @@ class Flashcard extends HiveObject {
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'question': question,
-      'answer': answer,
-      'deckId': deckId, // ✅ Save deckId
-      'interval': interval,
-      'easeFactor': easeFactor,
-      'lastReviewed': lastReviewed != null ? Timestamp.fromDate(lastReviewed!) : null,
-      'nextReview': nextReview != null ? Timestamp.fromDate(nextReview!) : null,
-    };
-  }
-
+  Map<String, dynamic> toMap() => {
+        'question': question,
+        'answer': answer,
+        'deckId': deckId,
+        'imagePath': imagePath,
+        'interval': interval,
+        'easeFactor': easeFactor,
+        'lastReviewed':
+            lastReviewed != null ? Timestamp.fromDate(lastReviewed!) : null,
+        'nextReview':
+            nextReview != null ? Timestamp.fromDate(nextReview!) : null,
+      };
+      
   /// From API response (JSON)
-  factory Flashcard.fromJson(Map<String, dynamic> json) {
-    return Flashcard.fromMap(
-      json['id'] ?? '',
-      json,
-    );
-  }
+  factory Flashcard.fromJson(Map<String, dynamic> json) =>
+      Flashcard.fromMap(json['id'] ?? '', json);
 
-  /// For sending to API
   Map<String, dynamic> toJson() {
     final map = toMap();
     map['id'] = id;
     return map;
   }
+
 
   /// ✅ Copy with updated values (including deckId)
   Flashcard copyWith({

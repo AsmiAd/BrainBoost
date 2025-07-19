@@ -3,7 +3,7 @@ import 'package:brain_boost/services/api_service.dart';
 import 'package:brain_boost/services/deck_local_service.dart';
 import 'package:brain_boost/services/deck_service.dart';
 import 'package:brain_boost/services/flashcard_local_service.dart';
-import 'package:brain_boost/core/providers/auth_provider.dart';
+import 'package:brain_boost/providers/auth_provider.dart';
 import 'package:brain_boost/models/deck_model.dart';
 
 /// Initialize DeckLocalService

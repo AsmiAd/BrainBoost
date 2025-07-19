@@ -6,8 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
-import '../../core/providers/theme_provider.dart';
-import '../../core/providers/user_provider.dart';
+import '../../providers/theme_provider.dart';
+import '../../providers/user_provider.dart';
 import 'package:brain_boost/screens/profile/feedback_screen.dart';
 import 'package:brain_boost/screens/profile/help_screen.dart';
 

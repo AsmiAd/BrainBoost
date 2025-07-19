@@ -15,15 +15,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-
-  final List<Widget> _screens = [
-    HomeScreen(),
-    SearchScreen(),
-    AddScreen(onDeckCreated: (deck) {
-    }),
-    StatisticScreen(),
-    ProfileScreen(),
-  ];
+  late List<Widget> _screens;
 
   final List<IconData> _navIcons = [
     Icons.home,
@@ -36,9 +28,24 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   @override
+  void initState() {
+    super.initState();
+    _screens = [
+      HomeScreen(),
+      SearchScreen(),
+      AddScreen(onDeckCreated: (deck) {
+        // You can refresh HomeScreen or do something when deck is created
+        print('Deck created: ${deck.name}');
+      }),
+      StatisticScreen(),
+      ProfileScreen(),
+    ];
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, 
+      extendBody: true,
       body: _screens[_currentIndex],
       bottomNavigationBar: _buildCurvedNavBar(),
     );
@@ -47,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildCurvedNavBar() {
     return Theme(
       data: Theme.of(context).copyWith(
-        canvasColor: Colors.transparent, 
+        canvasColor: Colors.transparent,
       ),
       child: CurvedNavigationBar(
         index: _currentIndex,

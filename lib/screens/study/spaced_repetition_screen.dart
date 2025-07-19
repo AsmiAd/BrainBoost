@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/providers/deck_provider.dart';
+import '../../providers/deck_provider.dart';
 import '../../models/flashcard_model.dart';
 
 class SpacedRepetitionScreen extends ConsumerStatefulWidget {

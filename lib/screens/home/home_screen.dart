@@ -7,8 +7,8 @@ import 'package:brain_boost/widgets/deck_card.dart';
 import 'package:brain_boost/widgets/error_retry_widget.dart';
 import 'package:brain_boost/widgets/loading_indicator.dart';
 
-import '../../core/providers/deck_provider.dart';
-import '../../core/providers/user_provider.dart';
+import '../../providers/deck_provider.dart';
+import '../../providers/user_provider.dart';
 
 // Usage example in your HomeScreen or any widget
 

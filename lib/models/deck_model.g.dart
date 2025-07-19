@@ -21,13 +21,20 @@ class DeckAdapter extends TypeAdapter<Deck> {
       name: fields[1] as String,
       cardCount: fields[2] as int,
       lastAccessed: fields[3] as DateTime?,
+      description: fields[4] as String,
+      tags: (fields[5] as List).cast<String>(),
+      category: fields[6] as String,
+      color: fields[7] as int,
+      isPublic: fields[8] as bool,
+      imagePath: fields[9] as String?,
+      createdAt: fields[10] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Deck obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -35,7 +42,21 @@ class DeckAdapter extends TypeAdapter<Deck> {
       ..writeByte(2)
       ..write(obj.cardCount)
       ..writeByte(3)
-      ..write(obj.lastAccessed);
+      ..write(obj.lastAccessed)
+      ..writeByte(4)
+      ..write(obj.description)
+      ..writeByte(5)
+      ..write(obj.tags)
+      ..writeByte(6)
+      ..write(obj.category)
+      ..writeByte(7)
+      ..write(obj.color)
+      ..writeByte(8)
+      ..write(obj.isPublic)
+      ..writeByte(9)
+      ..write(obj.imagePath)
+      ..writeByte(10)
+      ..write(obj.createdAt);
   }
 
   @override

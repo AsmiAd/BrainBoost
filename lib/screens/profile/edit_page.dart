@@ -8,7 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
-import '../../core/providers/user_provider.dart';
+import '../../providers/user_provider.dart';
 
 class EditPage extends ConsumerStatefulWidget {
   const EditPage({Key? key}) : super(key: key);

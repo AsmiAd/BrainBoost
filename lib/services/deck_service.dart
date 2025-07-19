@@ -54,12 +54,20 @@ class DeckService {
     await _cardLocal.saveOne(deckId, card);
   }
 
+  Future<Deck> createDeck(Deck deck) async {
+    final createdDeck = await _api.createDeck(deck);
+    await _deckLocal.saveOne(createdDeck);
+    return createdDeck;
+  }
+
   /// ✅ CREATE deck, save flashcards, and cache locally
 Future<void> createDeckWithCards(Deck deck, List<Flashcard> cards) async {
   try {
+    // Send full deck (with title, description, color, category, tags, isPublic)
     final createdDeck = await _api.createDeck(deck);
-    print('Created deck ID: ${createdDeck.id}');  // <-- Add this
+    print('Created deck ID: ${createdDeck.id}');
 
+    // Attach createdDeck.id to all flashcards before saving
     final updatedCards = cards.map((c) => c.copyWith(deckId: createdDeck.id)).toList();
 
     if (updatedCards.isNotEmpty) {
@@ -67,6 +75,7 @@ Future<void> createDeckWithCards(Deck deck, List<Flashcard> cards) async {
       await _api.saveManyCards(createdDeck.id, updatedCards);
     }
 
+    // Save to local Hive cache (so deck + cards are available offline)
     await _deckLocal.saveOne(createdDeck);
     await _cardLocal.saveMany(createdDeck.id, updatedCards);
 
@@ -76,6 +85,7 @@ Future<void> createDeckWithCards(Deck deck, List<Flashcard> cards) async {
     rethrow;
   }
 }
+
 
 
 }

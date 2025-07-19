@@ -1,70 +1,124 @@
+import 'package:brain_boost/screens/study/timed_mode_screen.dart';
+import 'package:brain_boost/screens/study/true_false_mode_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:brain_boost/models/deck_model.dart';
-import 'package:brain_boost/widgets/loading_indicator.dart';
-import 'package:brain_boost/widgets/error_retry_widget.dart';
+import '../../models/deck_model.dart';
+import '../../providers/deck_provider.dart';
+import 'spaced_repetition_screen.dart';
+import 'flash_mode_screen.dart'; 
 
-import '../../core/providers/deck_provider.dart';
-
-final studyDecksProvider = FutureProvider.autoDispose<List<Deck>>((ref) async {
-  final service = ref.watch(deckServiceProvider);
-  return service.getCachedDecksAfterSync();
-});
-
-
-class StudyScreen extends ConsumerWidget {
+class StudyScreen extends ConsumerStatefulWidget {
   const StudyScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final decksAsync = ref.watch(studyDecksProvider);
+  ConsumerState<StudyScreen> createState() => _StudyModeScreenState();
+}
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Study')),
-      body: decksAsync.when(
-        loading: () => const LoadingIndicator(),
-        error: (error, _) => ErrorRetryWidget(
-          error: error,
-          onRetry: () => ref.refresh(studyDecksProvider),
-        ),
-        data: (decks) {
-          if (decks.isEmpty) {
-            return const Center(child: Text("No decks available."));
-          }
+class _StudyModeScreenState extends ConsumerState<StudyScreen> {
+  List<Deck> decks = [];
+  bool loading = true;
 
-          return ListView.builder(
-            itemCount: decks.length,
-            itemBuilder: (context, index) {
-              final deck = decks[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: ListTile(
-                  title: Text(deck.name),
-                  subtitle: const Text('Choose a mode'),
-                  trailing: PopupMenuButton<String>(
-                    onSelected: (value) {
-                      if (value == 'Flash') {
-                        Navigator.pushNamed(
-                          context,
-                          '/flash_mode',
-                          arguments: deck.id,
-                        );
-                      } else if (value == 'Spaced') {
-                        Navigator.pushNamed(
-                          context,
-                          '/spaced_repetition',
-                          arguments: deck.id,
-                        );
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(value: 'Flash', child: Text('Flash Mode')),
-                      const PopupMenuItem(value: 'Spaced', child: Text('Spaced Repetition')),
-                    ],
-                  ),
-                ),
-              );
+  @override
+  void initState() {
+    super.initState();
+    loadDecks();
+  }
+
+  Future<void> loadDecks() async {
+    final deckService = ref.read(deckServiceProvider);
+    final fetchedDecks = await deckService.getAllDecks();
+    setState(() {
+      decks = fetchedDecks;
+      loading = false;
+    });
+  }
+
+  void _showModeSelection(Deck deck) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Wrap(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.repeat),
+            title: const Text('Spaced Repetition'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => SpacedRepetitionScreen(deckId: deck.id),
+              ));
             },
+          ),
+          ListTile(
+            leading: const Icon(Icons.quiz),
+            title: const Text('Quiz Mode'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, '/quiz_mode', arguments: deck.id);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.check_box),
+            title: const Text('True/False Mode'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => TrueFalseModeStudyScreen(deck: deck),
+              ));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.timer),
+            title: const Text('Timed Mode'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => TimedModeStudyScreen(deck: deck),
+              ));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.shuffle),
+            title: const Text('Random Mix Mode'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, '/random_mix');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.style),
+            title: const Text('Flashcard Review'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => FlashModeScreen(deckId: deck.id),
+              ));
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (loading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (decks.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Study Modes')),
+        body: const Center(child: Text('No decks available')),
+      );
+    }
+    return Scaffold(
+      appBar: AppBar(title: const Text('Select Deck to Study')),
+      body: ListView.builder(
+        itemCount: decks.length,
+        itemBuilder: (context, index) {
+          final deck = decks[index];
+          return ListTile(
+            title: Text(deck.name),
+            subtitle: Text(deck.description ?? ''),
+            trailing: const Icon(Icons.arrow_forward_ios),
+            onTap: () => _showModeSelection(deck),
           );
         },
       ),

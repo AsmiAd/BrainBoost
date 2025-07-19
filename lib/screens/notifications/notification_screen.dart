@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/constants/app_text_styles.dart';
-import '../../core/providers/notification_provider.dart';
+import '../../providers/notification_provider.dart';
 
 
 class NotificationScreen extends ConsumerWidget {

@@ -21,6 +21,7 @@ class FlashcardAdapter extends TypeAdapter<Flashcard> {
       question: fields[1] as String,
       answer: fields[2] as String,
       deckId: fields[7] as String,
+      imagePath: fields[8] as String?,
       interval: fields[3] as int,
       easeFactor: fields[4] as double,
       lastReviewed: fields[5] as DateTime?,
@@ -31,7 +32,7 @@ class FlashcardAdapter extends TypeAdapter<Flashcard> {
   @override
   void write(BinaryWriter writer, Flashcard obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class FlashcardAdapter extends TypeAdapter<Flashcard> {
       ..writeByte(6)
       ..write(obj.nextReview)
       ..writeByte(7)
-      ..write(obj.deckId);
+      ..write(obj.deckId)
+      ..writeByte(8)
+      ..write(obj.imagePath);
   }
 
   @override

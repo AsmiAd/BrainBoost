@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:brain_boost/models/deck_model.dart';
 import 'package:brain_boost/widgets/deck_card.dart';
 
-import '../../core/providers/deck_provider.dart';
+import '../../providers/deck_provider.dart';
 
 
 final decksProvider = FutureProvider.autoDispose<List<Deck>>((ref) {

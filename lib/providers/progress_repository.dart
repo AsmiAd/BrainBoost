@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
-import '../../models/study_progress.dart';
-import '../../services/api_service.dart';
+import '../models/study_progress.dart';
+import '../services/api_service.dart';
 
 final progressRepositoryProvider = Provider<ProgressRepository>((ref) {
   final api = ref.watch(apiServiceProvider);

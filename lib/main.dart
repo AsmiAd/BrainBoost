@@ -1,5 +1,5 @@
 import 'package:brain_boost/core/constants/app_theme.dart';
-import 'package:brain_boost/core/providers/theme_provider.dart';
+import 'package:brain_boost/providers/theme_provider.dart';
 import 'package:brain_boost/screens/splash/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +12,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'models/deck_model.dart';
 import 'models/flashcard_model.dart';
 import 'models/study_progress.dart';
+import 'providers/deck_provider.dart';
 
 void main() async {
   // Ensure Flutter binding is initialized
@@ -35,6 +36,11 @@ void main() async {
   if (!Hive.isAdapterRegistered(3)) {
     Hive.registerAdapter(FlashcardAdapter());
   }
+
+  final container = ProviderContainer();
+await container.read(deckLocalServiceInitProvider.future);
+await container.read(flashcardLocalServiceInitProvider.future);
+
 
   // ✅ Open Hive boxes
   await Hive.openBox<Deck>('decks');
