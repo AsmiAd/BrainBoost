@@ -1,3 +1,4 @@
+import 'package:brain_boost/screens/chat/gemini_chat_screen.dart';
 import 'package:brain_boost/screens/notifications/notification_screen.dart';
 import 'package:brain_boost/screens/profile/feedback_screen.dart';
 import 'package:brain_boost/screens/profile/help_screen.dart';
@@ -47,6 +48,9 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const FeedbackScreen());
       case '/help':
         return MaterialPageRoute(builder: (_) => const HelpScreen());
+        case '/gemini':
+  return MaterialPageRoute(builder: (_) => const GeminiChatScreen());
+
       case '/flash_mode': {
   final args = settings.arguments as Map<String, dynamic>;
   final deckTitle = args['deckTitle'] as String;

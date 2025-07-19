@@ -55,7 +55,7 @@ dependencies:
   hive_flutter: ^1.1.0
   image_picker: ^1.1.2
 
-  http: ^1.2.0
+  http: ^1.4.0
   lottie: ^3.3.1
 
 

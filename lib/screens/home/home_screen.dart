@@ -1,3 +1,4 @@
+import 'package:brain_boost/screens/chat/gemini_chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,6 +24,13 @@ final recentDecksProvider = FutureProvider.autoDispose<List<Deck>>((ref) async {
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
+  
+  void _openChatSupport(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const GeminiChatScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

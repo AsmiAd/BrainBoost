@@ -1,3 +1,4 @@
+import 'package:brain_boost/screens/chat/gemini_chat_screen.dart';
 import 'package:brain_boost/screens/profile/edit_page.dart';
 import 'package:brain_boost/screens/setting/setting_screen.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,14 @@ import 'package:brain_boost/screens/profile/help_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
+
+    void _openChatSupport(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const GeminiChatScreen()),
+    );
+  }
+
 
   Future<void> logout(BuildContext context) async {
     try {
