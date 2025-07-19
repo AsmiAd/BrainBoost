@@ -52,22 +52,33 @@ class ApiService {
   }
 
   Future<Deck> createDeck(Deck deck) async {
-    final res = await _post(
-      '/api/decks',
-      body: jsonEncode(deck.toJson()),
-      expected: 201,
-    );
-    return Deck.fromJson(jsonDecode(res.body));
-  }
+  print('Creating deck with name: ${deck.name}');
+
+  final res = await _post(
+    '/api/decks',
+    body: jsonEncode({
+      'title': deck.name,            // map name → title
+      'description': '',             // default empty (your Deck has no field)
+      'color': '#ffffff',            // default color
+      'category': 'General',         // default category
+      'isPublic': false,             // default false
+    }),
+    expected: 201,
+  );
+  return Deck.fromJson(jsonDecode(res.body));
+}
+
+
+
 
   Future<void> saveManyCards(String deckId, List<Flashcard> cards) async {
-    // ✅ Match the backend route! (This is the correct one unless you changed it)
-    final res = await _post(
-      '/api/cards/$deckId/many',
-      body: jsonEncode(cards.map((c) => c.toJson()).toList()),
-      expected: 200,
-    );
-  }
+  final res = await _post(
+    '/api/decks/$deckId/cards/bulk', // correct endpoint
+    body: jsonEncode({'cards': cards.map((c) => c.toJson()).toList()}),
+    expected: 200,
+  );
+}
+
 
   Future<List<Flashcard>> fetchCards(String deckId) async {
     final res = await _get('/api/cards/$deckId');

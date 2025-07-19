@@ -57,16 +57,16 @@ class DeckService {
   /// ✅ CREATE deck, save flashcards, and cache locally
 Future<void> createDeckWithCards(Deck deck, List<Flashcard> cards) async {
   try {
-    // Step 1: Create the deck
     final createdDeck = await _api.createDeck(deck);
+    print('Created deck ID: ${createdDeck.id}');  // <-- Add this
 
-    // Step 2: Save cards with correct deck ID
-    final updatedCards = cards.map((card) => card.copyWith(deckId: createdDeck.id)).toList();
+    final updatedCards = cards.map((c) => c.copyWith(deckId: createdDeck.id)).toList();
 
-    // ✅ Use positional parameters here
-    await _api.saveManyCards(createdDeck.id, updatedCards);
+    if (updatedCards.isNotEmpty) {
+      print('Saving ${updatedCards.length} cards to deck ${createdDeck.id}');
+      await _api.saveManyCards(createdDeck.id, updatedCards);
+    }
 
-    // Step 3: Save locally
     await _deckLocal.saveOne(createdDeck);
     await _cardLocal.saveMany(createdDeck.id, updatedCards);
 
@@ -76,5 +76,6 @@ Future<void> createDeckWithCards(Deck deck, List<Flashcard> cards) async {
     rethrow;
   }
 }
+
 
 }

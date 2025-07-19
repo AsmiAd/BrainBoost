@@ -67,6 +67,7 @@ class _AddScreenState extends State<AddScreen> {
 
     setState(() => _isLoading = true);
 
+    // Create a new deck map (simulate or adjust as needed)
     final newDeck = {
       'id': DateTime.now().millisecondsSinceEpoch.toString(),
       'title': _titleController.text,
@@ -77,23 +78,24 @@ class _AddScreenState extends State<AddScreen> {
       'createdAt': DateTime.now().toIso8601String(),
     };
 
-    await Future.delayed(const Duration(seconds: 1));
-
     widget.onDeckCreated(newDeck);
-if (!mounted) return;
 
-Navigator.push(
+    setState(() => _isLoading = false);
+
+    // Navigate to AddFlashcardsScreen passing the newDeck map
+    if (!mounted) return;
+    Navigator.pushReplacement(
   context,
   MaterialPageRoute(
     builder: (_) => AddFlashcardsScreen(deck: newDeck),
   ),
 );
 
+
+    // Show success message
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Deck created successfully!')),
     );
-
-    setState(() => _isLoading = false);
   }
 
   @override
@@ -106,7 +108,7 @@ Navigator.push(
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("")),
+      appBar: AppBar(title: const Text("Create Deck")),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -168,9 +170,7 @@ Navigator.push(
                         DropdownMenuItem(value: "Information Systems", child: Text("Information Systems")),
                         DropdownMenuItem(value: "Data Communication", child: Text("Data Communication")),
                         DropdownMenuItem(value: "SPIT", child: Text("SPIT")),
-
-                        DropdownMenuItem(value: "Data Warehouse and Data Mining", child: Text("Ecommerce")),
-
+                        DropdownMenuItem(value: "Data Warehouse and Data Mining", child: Text("Data Warehouse and Data Mining")),
                         DropdownMenuItem(value: "Ecommerce", child: Text("Ecommerce")),
                       ],
                       onChanged: (val) => setState(() => _selectedCategory = val),
@@ -183,8 +183,8 @@ Navigator.push(
                         icon: const Icon(Icons.add),
                         label: const Text("Create Deck"),
                         style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16,horizontal: 16),
-                          shape: RoundedRectangleBorder(
+                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                          shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                           ),
                         ),

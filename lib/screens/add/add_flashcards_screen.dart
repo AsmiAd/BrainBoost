@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/providers/deck_provider.dart';
+import '../../core/providers/deck_provider.dart'; // your provider path
 import '../../models/deck_model.dart';
 import '../../models/flashcard_model.dart';
 
@@ -33,7 +33,7 @@ class _AddFlashcardsScreenState extends State<AddFlashcardsScreen> {
     _answerController.clear();
   }
 
-  void _finish() async {
+  Future<void> _finish() async {
     final deckData = widget.deck;
 
     final deck = Deck(
@@ -47,7 +47,7 @@ class _AddFlashcardsScreenState extends State<AddFlashcardsScreen> {
       id: UniqueKey().toString(),
       question: card['question']!,
       answer: card['answer']!,
-      deckId: deck.id
+      deckId: deck.id,
     )).toList();
 
     final container = ProviderScope.containerOf(context);
@@ -56,10 +56,20 @@ class _AddFlashcardsScreenState extends State<AddFlashcardsScreen> {
     await service.createDeckWithCards(deck, flashcards);
 
     if (!mounted) return;
-    Navigator.popUntil(context, ModalRoute.withName('/home'));
+
+    // Navigate back to home (or your main screen)
+    Navigator.popUntil(context, (route) => route.isFirst);
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Deck saved successfully")),
     );
+  }
+
+  @override
+  void dispose() {
+    _questionController.dispose();
+    _answerController.dispose();
+    super.dispose();
   }
 
   @override
