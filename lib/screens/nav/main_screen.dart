@@ -35,7 +35,7 @@ class _MainScreenState extends State<MainScreen> {
       SearchScreen(),
       AddScreen(onDeckCreated: (deck) {
         // You can refresh HomeScreen or do something when deck is created
-        print('Deck created: ${deck.name}');
+        print('Deck created: $deck');
       }),
       StatisticScreen(),
       ProfileScreen(),

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 
@@ -38,6 +39,9 @@ class Deck {
   @HiveField(10)
   final DateTime? createdAt;
 
+  @HiveField(11)
+  final String? userId;
+
   Deck({
     required this.id,
     required this.name,
@@ -50,6 +54,7 @@ class Deck {
     this.isPublic = false,
     this.imagePath,
     this.createdAt,
+    this.userId,
   });
 
   /// Firestore mapping
@@ -62,13 +67,12 @@ class Deck {
       lastAccessed: (data['last_accessed'] as Timestamp?)?.toDate(),
       description: data['description'] ?? '',
       category: data['category'] ?? 'General',
-      color: (data['color'] is int)
-          ? data['color']
-          : 0xFF2196F3,
+      color: (data['color'] is int) ? data['color'] : 0xFF2196F3,
       isPublic: data['isPublic'] ?? false,
       tags: (data['tags'] as List?)?.cast<String>() ?? [],
       imagePath: data['imagePath'],
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+      userId: data['userId'], // FIXED
     );
   }
 
@@ -88,6 +92,7 @@ class Deck {
       'createdAt': createdAt != null
           ? Timestamp.fromDate(createdAt!)
           : null,
+      'userId': userId,
     };
   }
 
@@ -109,10 +114,11 @@ class Deck {
       createdAt: map['createdAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])
           : null,
+      userId: map['userId'], // ADD to Hive as well
     );
   }
 
-  /// JSON (for API / MongoDB communication)
+  /// JSON (for API / MongoDB)
   factory Deck.fromJson(Map<String, dynamic> json) {
     return Deck(
       id: json['id'] ?? json['_id'] ?? '',
@@ -123,15 +129,14 @@ class Deck {
           : null,
       description: json['description'] ?? '',
       category: json['category'] ?? 'General',
-      color: (json['color'] is int)
-          ? json['color']
-          : 0xFF2196F3,
+      color: (json['color'] is int) ? json['color'] : 0xFF2196F3,
       isPublic: json['isPublic'] ?? false,
       tags: (json['tags'] as List?)?.cast<String>() ?? [],
       imagePath: json['imagePath'],
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'])
           : null,
+      userId: json['userId'], // FIXED for API
     );
   }
 
@@ -148,6 +153,7 @@ class Deck {
       'tags': tags,
       'imagePath': imagePath,
       'createdAt': createdAt?.toIso8601String(),
+      'userId': userId, // include when sending to API
     };
   }
 }

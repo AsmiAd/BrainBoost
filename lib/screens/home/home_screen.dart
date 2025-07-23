@@ -1,40 +1,59 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:brain_boost/core/constants/app_text_styles.dart';
 import 'package:brain_boost/models/deck_model.dart';
 import 'package:brain_boost/widgets/deck_card.dart';
-import 'package:brain_boost/widgets/error_retry_widget.dart';
 import 'package:brain_boost/widgets/loading_indicator.dart';
+import 'package:brain_boost/widgets/error_retry_widget.dart';
 
-import '../../providers/deck_provider.dart';
-import '../../providers/user_provider.dart';
-
-// Usage example in your HomeScreen or any widget
-
-final recentDecksProvider = FutureProvider.autoDispose<List<Deck>>((ref) async {
-  final repo = ref.watch(deckServiceProvider);
-  await repo.sync();                 // Fetch latest decks from API and update cache
-  return repo.getAllDecks();         // Return cached decks immediately after sync
-});
-
-
-
-
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final decksAsync = ref.watch(recentDecksProvider);
-    final usernameAsync = ref.watch(usernameProvider);
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late Future<List<Deck>> _decksFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _decksFuture = fetchDecks();
+  }
+
+  Future<List<Deck>> fetchDecks() async {
+    try {
+      final response = await http.get(Uri.parse('http://127.0.0.1:5000/api/decks'));
 
 
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((json) => Deck.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load decks');
+      }
+    } catch (e) {
+      throw Exception('Error fetching decks: $e');
+    }
+  }
+
+  Future<void> _refreshDecks() async {
+    setState(() {
+      _decksFuture = fetchDecks();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(context, usernameAsync),
+      appBar: _buildAppBar(context),
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: () => ref.refresh(recentDecksProvider.future),
+          onRefresh: _refreshDecks,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -47,22 +66,32 @@ class HomeScreen extends ConsumerWidget {
                 Text('Recent Decks', style: AppTextStyles.headingSmall),
                 const SizedBox(height: 12),
                 Expanded(
-                  child: decksAsync.when(
-                    loading: () => const LoadingIndicator(),
-                    error: (error, _) => ErrorRetryWidget(
-                      error: error,
-                      onRetry: () => ref.refresh(recentDecksProvider),
-                    ),
-                    data: (decks) => decks.isEmpty
-                        ? const Center(child: Text('No decks found'))
-                        : ListView.separated(
-                            itemCount: decks.length,
-                            separatorBuilder: (_, __) => const SizedBox(height: 12),
-                            itemBuilder: (_, index) => DeckCard(
-                              deck: decks[index],
-                              onTap: () => _openDeck(context, decks[index].id),
-                            ),
+                  child: FutureBuilder<List<Deck>>(
+                    future: _decksFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const LoadingIndicator();
+                      } else if (snapshot.hasError) {
+                        return ErrorRetryWidget(
+                          error: snapshot.error.toString(),
+                          onRetry: _refreshDecks,
+                        );
+                      } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+                        return const Center(child: Text('No decks found'));
+                      } else if (snapshot.hasData) {
+                        final decks = snapshot.data!;
+                        return ListView.separated(
+                          itemCount: decks.length,
+                          separatorBuilder: (_, __) => const SizedBox(height: 12),
+                          itemBuilder: (_, index) => DeckCard(
+                            deck: decks[index],
+                            onTap: () => _openDeck(context, decks[index].id),
                           ),
+                        );
+                      } else {
+                        return const Center(child: Text('Unexpected error'));
+                      }
+                    },
                   ),
                 ),
               ],
@@ -73,49 +102,44 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context, AsyncValue<String> usernameAsync) {
-  return AppBar(
-    title: usernameAsync.when(
-      loading: () => const Text('Hi... 👋'),
-      error: (_, __) => const Text('Hi User 👋'),
-      data: (name) => Text('Hi $name 👋', style: AppTextStyles.headingSmall),
-    ),
-    actions: [
-      IconButton(
-        icon: Badge(
-          smallSize: 8,
-          child: const Icon(Icons.notifications_none),
-        ),
-        onPressed: () => _showNotifications(context),
-      ),
-      IconButton(
-        icon: const Icon(Icons.vpn_key),
-        tooltip: 'Print Firebase ID Token',
-        onPressed: () async {
-          final user = FirebaseAuth.instance.currentUser;
-          if (user != null) {
-            final token = await user.getIdToken();
-            print('Firebase ID Token:\n$token');
-            // Optional: show a SnackBar to notify user
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('ID token printed to console')),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('No user logged in')),
-            );
-          }
-        },
-      ),
-    ],
-  );
-}
+  AppBar _buildAppBar(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    final displayName = user?.displayName ?? 'User';
 
+    return AppBar(
+      title: Text('Hi Asmi👋', style: AppTextStyles.headingSmall),
+      actions: [
+        IconButton(
+          icon: Badge(
+            smallSize: 8,
+            child: const Icon(Icons.notifications_none),
+          ),
+          onPressed: () => _showNotifications(context),
+        ),
+        IconButton(
+          icon: const Icon(Icons.vpn_key),
+          tooltip: 'Print Firebase ID Token',
+          onPressed: () async {
+            if (user != null) {
+              final token = await user.getIdToken();
+              print('Firebase ID Token:\n$token');
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('ID token printed to console')),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('No user logged in')),
+              );
+            }
+          },
+        ),
+      ],
+    );
+  }
 
   void _showNotifications(BuildContext context) {
-  Navigator.pushNamed(context, '/notifications');
-}
-
+    Navigator.pushNamed(context, '/notifications');
+  }
 
   Widget _buildSearchBar(BuildContext context) => TextField(
         decoration: InputDecoration(

@@ -13,8 +13,7 @@ class ApiService {
 
   final FirebaseAuth _auth;
 
-  static const String _baseUrl =
-      'http://10.0.2.2:8080'; // your backend API base URL
+  static const String _baseUrl = 'http://127.0.0.1:5000'; // backend base URL
 
   Future<String> _token() async =>
       (await _auth.currentUser?.getIdToken()) ?? '';
@@ -24,94 +23,88 @@ class ApiService {
         'Content-Type': 'application/json',
       };
 
-  Future<http.Response> _get(String path) async => http.get(
-        Uri.parse('$_baseUrl$path'),
-        headers: await _headers(),
-      );
+  Future<http.Response> _get(String path) async =>
+      http.get(Uri.parse('$_baseUrl$path'), headers: await _headers());
 
-  Future<http.Response> _post(
-    String path, {
-    Object? body,
-    int expected = 200,
-  }) async {
-    final res = await http.post(
-      Uri.parse('$_baseUrl$path'),
-      headers: await _headers(),
-      body: body,
-    );
+  Future<http.Response> _post(String path,
+      {Object? body, int expected = 200}) async {
+    final res = await http.post(Uri.parse('$_baseUrl$path'),
+        headers: await _headers(), body: body);
     if (res.statusCode != expected) {
       throw Exception('API ${res.statusCode}: ${res.body}');
     }
     return res;
   }
 
-  /// Fetch all decks (user or public)
-  Future<List<Deck>> fetchDecks({bool onlyPublic = false}) async {
-    final res = await _get('/api/decks${onlyPublic ? '?public=true' : ''}');
-    return (jsonDecode(res.body) as List).map((j) => Deck.fromJson(j)).toList();
+  Future<http.Response> _put(String path,
+      {Object? body, int expected = 200}) async {
+    final res = await http.put(Uri.parse('$_baseUrl$path'),
+        headers: await _headers(), body: body);
+    if (res.statusCode != expected) {
+      throw Exception('API ${res.statusCode}: ${res.body}');
+    }
+    return res;
   }
 
-  /// Create a deck with full fields (title, description, color, tags, etc.)
+  // -------- Decks --------
+  Future<List<Deck>> fetchDecks({String? userId, bool onlyPublic = false}) async {
+  String query = '';
+  if (onlyPublic) query = '?public=true';
+  if (userId != null) query = '?userId=$userId';
+  final res = await _get('/api/decks$query');
+  return (jsonDecode(res.body) as List).map((j) => Deck.fromJson(j)).toList();
+}
+
+
   Future<Deck> createDeck(Deck deck) async {
-    print('Creating deck: ${deck.name}');
-
-    final res = await _post(
-      '/api/decks',
-      body: jsonEncode({
-        'title': deck.name,
-        'description': deck.description ?? '',
-        'color': deck.color != null
-            ? '#${deck.color!.toRadixString(16).padLeft(8, '0').substring(2)}'
-            : '#ffffff', // default white
-        'category': deck.category ?? 'General',
-        'tags': deck.tags ?? [],
-        'isPublic': deck.isPublic ?? false,
-        'imagePath': deck.imagePath ?? '',
-        'createdAt': deck.createdAt?.toIso8601String() ??
-            DateTime.now().toIso8601String(),
-      }),
-      expected: 201,
-    );
-
+    final res = await _post('/api/decks',
+        body: jsonEncode({
+          'title': deck.name,
+          'description': deck.description ?? '',
+          'color': deck.color != null
+              ? '#${deck.color!.toRadixString(16).padLeft(8, '0').substring(2)}'
+              : '#ffffff',
+          'category': deck.category ?? 'General',
+          'tags': deck.tags ?? [],
+          'isPublic': deck.isPublic ?? false,
+          'imagePath': deck.imagePath ?? '',
+          'userId': deck.userId ?? '', // ensure correct user
+        }),
+        expected: 201);
     return Deck.fromJson(jsonDecode(res.body));
   }
 
-  /// Bulk save flashcards to MongoDB API
-  Future<void> saveManyCards(String deckId, List<Flashcard> cards) async {
-    await _post(
-      '/api/decks/$deckId/cards/bulk',
-      body: jsonEncode({'cards': cards.map((c) => c.toJson()).toList()}),
-      expected: 200,
-    );
+  Future<void> updateDeck(String id, Map<String, dynamic> updates) async {
+    await _put('/api/decks/$id', body: jsonEncode(updates), expected: 200);
   }
 
-  /// Fetch flashcards for a deck from API
+  Future<void> deleteDeck(String id) async {
+    final res =
+        await http.delete(Uri.parse('$_baseUrl/api/decks/$id'), headers: await _headers());
+    if (res.statusCode != 200) {
+      throw Exception('Failed to delete deck: ${res.body}');
+    }
+  }
+
+  // -------- Cards --------
   Future<List<Flashcard>> fetchCards(String deckId) async {
-    final res = await _get('/api/cards/$deckId');
+    final res = await _get('/api/cards?deckId=$deckId');
     return (jsonDecode(res.body) as List)
         .map((j) => Flashcard.fromJson(j))
         .toList();
   }
 
-  /// Create a single flashcard in API
   Future<void> createCard(Flashcard card) async {
-    await _post(
-      '/api/cards',
-      body: jsonEncode(card.toJson()),
-      expected: 201,
-    );
+    await _post('/api/cards',
+        body: jsonEncode(card.toJson()), expected: 201);
   }
 
-  /// Update flashcard on MongoDB API + ALSO update spaced repetition fields in Firestore
   Future<void> updateFlashcard(String deckId, Flashcard card) async {
-    // Update card in MongoDB backend API
-    await _post(
-      '/api/cards/${card.id}',
-      body: jsonEncode(card.toJson()),
-      expected: 200,
-    );
+    // Update card in backend
+    await _put('/api/cards/${card.id}',
+        body: jsonEncode(card.toJson()), expected: 200);
 
-    // Also update spaced repetition related fields in Firestore for real-time sync
+    // Sync spaced repetition data to Firestore
     final docRef = FirebaseFirestore.instance
         .collection('decks')
         .doc(deckId)
@@ -133,7 +126,24 @@ class ApiService {
     }, SetOptions(merge: true));
   }
 
-  /// Fetch study progress from API
+  Future<void> deleteCard(String id) async {
+    final res =
+        await http.delete(Uri.parse('$_baseUrl/api/cards/$id'), headers: await _headers());
+    if (res.statusCode != 200) {
+      throw Exception('Failed to delete card: ${res.body}');
+    }
+  }
+
+  Future<void> saveManyCards(String deckId, List<Flashcard> cards) async {
+  final body = {
+    'cards': cards.map((c) => c.toJson()).toList(),
+  };
+  await _post('/api/decks/$deckId/cards/bulk',
+      body: jsonEncode(body), expected: 200);
+}
+
+
+  // -------- Study Progress --------
   Future<List<StudyProgress>> fetchProgress() async {
     final res = await _get('/api/progress');
     return (jsonDecode(res.body) as List)
@@ -141,13 +151,34 @@ class ApiService {
         .toList();
   }
 
-  /// Update study progress via API
   Future<void> updateProgress(StudyProgress p) async {
-    await _post(
-      '/api/progress',
-      body: jsonEncode(p.toJson()),
-      expected: 201,
-    );
+    await _post('/api/progress',
+        body: jsonEncode(p.toJson()), expected: 201);
+  }
+
+  // -------- Admin --------
+  Future<List<dynamic>> getAllUsers() async {
+    final res = await _get('/api/admin/users'); // uses auth headers now
+    if (res.statusCode == 200) return jsonDecode(res.body);
+    throw Exception('Failed to load users');
+  }
+
+  Future<List<dynamic>> getAllDecksAdmin() async {
+    final res = await _get('/api/admin/decks');
+    if (res.statusCode == 200) return jsonDecode(res.body);
+    throw Exception('Failed to load decks');
+  }
+
+  Future<void> deleteUser(String id) async {
+    final res = await http.delete(Uri.parse('$_baseUrl/api/admin/users/$id'),
+        headers: await _headers());
+    if (res.statusCode != 200) throw Exception('Failed to delete user: ${res.body}');
+  }
+
+  Future<void> deleteDeckAdmin(String id) async {
+    final res = await http.delete(Uri.parse('$_baseUrl/api/admin/decks/$id'),
+        headers: await _headers());
+    if (res.statusCode != 200) throw Exception('Failed to delete deck: ${res.body}');
   }
 }
 

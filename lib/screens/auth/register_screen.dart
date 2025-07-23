@@ -175,35 +175,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                Row(
-                  children: const [
-                    Expanded(child: Divider()),
-                    SizedBox(width: 10),
-                    Text("OR", style: TextStyle(color: AppColors.grey)),
-                    SizedBox(width: 10),
-                    Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () async {
-                      final user = await _authService.signInWithGoogle();
-                      if (user != null && mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Signed in with Google')),
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
-                    icon: Image.asset(
-                      "images/google.png",
-                      height: 20,
-                    ),
-                    label: const Text("Continue with Google"),
-                  ),
-                ),
+                // Row(
+                //   children: const [
+                //     Expanded(child: Divider()),
+                //     SizedBox(width: 10),
+                //     Text("OR", style: TextStyle(color: AppColors.grey)),
+                //     SizedBox(width: 10),
+                //     Expanded(child: Divider()),
+                //   ],
+                // ),
+                // const SizedBox(height: 24),
+                // SizedBox(
+                //   width: double.infinity,
+                //   child: OutlinedButton.icon(
+                //     onPressed: () async {
+                //       final user = await _authService.signInWithGoogle();
+                //       if (user != null && mounted) {
+                //         ScaffoldMessenger.of(context).showSnackBar(
+                //           const SnackBar(content: Text('Signed in with Google')),
+                //         );
+                //         Navigator.pop(context);
+                //       }
+                //     },
+                //     icon: Image.asset(
+                //       "images/google.png",
+                //       height: 20,
+                //     ),
+                //     label: const Text("Continue with Google"),
+                //   ),
+                // ),
               ],
             ),
           ),

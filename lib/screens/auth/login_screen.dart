@@ -183,38 +183,38 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 24),
 
-                      Row(
-                        children: const [
-                          Expanded(
-                              child:
-                                  Divider(thickness: 1, color: AppColors.grey)),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12),
-                            child: Text('OR',
-                                style: TextStyle(color: AppColors.grey)),
-                          ),
-                          Expanded(
-                              child:
-                                  Divider(thickness: 1, color: AppColors.grey)),
-                        ],
-                      ),
+                      // Row(
+                      //   children: const [
+                      //     Expanded(
+                      //         child:
+                      //             Divider(thickness: 1, color: AppColors.grey)),
+                      //     Padding(
+                      //       padding: EdgeInsets.symmetric(horizontal: 12),
+                      //       child: Text('OR',
+                      //           style: TextStyle(color: AppColors.grey)),
+                      //     ),
+                      //     Expanded(
+                      //         child:
+                      //             Divider(thickness: 1, color: AppColors.grey)),
+                      //   ],
+                      // ),
 
-                      const SizedBox(height: 24),
+                      // const SizedBox(height: 24),
 
                       
-                      _buildSocialButton(
-                        iconPath: 'assets/images/google.png',
-                        label: 'Continue with Google',
-                        onPressed: _loginWithGoogle,
-                      ),
-                      const SizedBox(height: 12),
+                      // _buildSocialButton(
+                      //   iconPath: 'assets/images/google.png',
+                      //   label: 'Continue with Google',
+                      //   onPressed: _loginWithGoogle,
+                      // ),
+                      // const SizedBox(height: 12),
 
-                      _buildSocialButton(
-                        iconPath: 'assets/images/gmail.png',
-                        label: 'Continue with Gmail',
-                        onPressed: _loginWithGoogle,
-                      ),
-                      const SizedBox(height: 24),
+                      // _buildSocialButton(
+                      //   iconPath: 'assets/images/gmail.png',
+                      //   label: 'Continue with Gmail',
+                      //   onPressed: _loginWithGoogle,
+                      // ),
+                      // const SizedBox(height: 24),
                     ],
                   ),
                 ),
